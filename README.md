@@ -393,3 +393,236 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 (println (process-data [1 2 3 4])) 
 ```
+
+## Trivial Lambda
+
+``` clojure
+(defn square [x]
+  (* x x))
+
+(def numbers [1 2 3 4])
+
+(println (map #(square %) numbers))
+```
+
+* __Refactoring:__ The anonymous function #(square %) does nothing more than calling square directly. This is redundant. Pass the function by name instead.
+
+``` clojure
+(defn square [x]
+  (* x x))
+
+(def numbers [1 2 3 4])
+
+(println (map square numbers))
+```
+
+## Deeply-nested Call Stacks
+
+``` clojure
+(defn sanitize [s]
+  (clojure.string/trim (clojure.string/lower-case (clojure.string/replace s #"[^a-zA-Z0-9]" ""))))
+
+(defn process-user [user]
+  (assoc user :username (sanitize (:name (first (sort-by :created-at (:accounts user)))))))
+
+(def users [{:name "Alice"
+             :accounts [{:created-at "2020-01-01" :name "Main"}]}
+            {:name "Bob"
+             :accounts [{:created-at "2019-05-01" :name "Legacy"}]}])
+
+(println (map process-user users))
+```
+
+* __Refactoring:__ Deeply nested expressions (especially within sanitize) reduce readability and make debugging harder. Break the nested calls into intermediate steps.
+
+``` clojure
+(defn sanitize [s]
+  (-> s
+      (clojure.string/replace #"[^a-zA-Z0-9]" "")
+      clojure.string/lower-case
+      clojure.string/trim))
+
+(defn earliest-account-name [accounts]
+  (:name (first (sort-by :created-at accounts))))
+
+(defn process-user [user]
+  (let [account-name (earliest-account-name (:accounts user))
+        username (sanitize account-name)]
+    (assoc user :username username)))
+
+(def users [{:name "Alice"
+             :accounts [{:created-at "2020-01-01" :name "Main"}]}
+            {:name "Bob"
+             :accounts [{:created-at "2019-05-01" :name "Legacy"}]}])
+
+(println (map process-user users))
+```
+
+## Inappropriate Collection
+
+``` clojure
+(def people
+  [{:person/name "Fred"}
+   {:person/name "Ethel"}
+   {:person/name "Lucy"}])
+
+(defn person-in-people?
+  [person people]
+  (some #(= person (:person/name %)) people))
+
+(person-in-people? "Fred" people) ;; => true
+```
+
+* __Refactoring:__ Scanning a sequential collection to find an item by a key is inefficient and obscures intent. Use an associative structure like group-by to enable fast, direct access.
+
+``` clojure
+(def collected-people
+  (group-by :person/name people))
+
+(contains? collected-people "Fred") ;; => true
+```
+
+## Underutilizing Clojure Features
+
+``` clojure
+(defn duplicate-and-wrap [x]
+  [(str "<" x ">") (str "<" x ">")])
+
+(def values ["a" "b" "c"])
+
+(println (apply concat (map duplicate-and-wrap values)))
+;; => ("<a>" "<a>" "<b>" "<b>" "<c>" "<c>")
+```
+
+* __Refactoring:__ Using apply concat (map ...) is functionally correct but unnecessarily verbose. Clojure provides mapcat to express this pattern more idiomatically and efficiently.
+
+``` clojure
+(defn duplicate-and-wrap [x]
+  [(str "<" x ">") (str "<" x ">")])
+
+(def values ["a" "b" "c"])
+
+(println (mapcat duplicate-and-wrap values))
+;; => ("<a>" "<a>" "<b>" "<b>" "<c>" "<c>")
+```
+
+## Premature Optimization
+
+``` clojure
+(defmacro with-retry [[attempts timeout] & body]
+  `(loop [n# ~attempts]
+     (let [[e# result#]
+           (try
+             [nil (do ~@body)]
+             (catch Throwable e#
+               [e# nil]))]
+       (cond
+         (nil? e#) result#
+         (> n# 0) (do (Thread/sleep ~timeout)
+                     (recur (dec n#)))
+         :else (throw (new Exception "all attempts exhausted" e#))))))
+
+(with-retry [3 2000]
+  (get-file-from-network "/path/to/file.txt"))
+```
+
+* __Refactoring:__ This macro retries blindly on failure, regardless of the error type. It introduces complexity early, without knowing if retrying is the right solution. Prefer explicit handling with functions and selective retry logic.
+
+``` clojure
+(defn with-retry [[attempts timeout] func]
+  (loop [n attempts]
+    (let [[e result]
+          (try
+            [nil (func)]
+            (catch Throwable e
+              [e nil]))]
+      (cond
+        (nil? e) result
+        (> n 0) (do (Thread/sleep timeout)
+                    (recur (dec n)))
+        :else (throw (Exception. "all attempts exhausted" e))))))
+
+(with-retry [3 2000]
+  #(get-file-from-network "/path/to/file.txt"))
+```
+
+## Lazy Side Effects
+
+``` clojure
+(defn notify [x]
+  (println "Notifying value:" x)
+  x)
+
+(def data (range 3))
+
+(->> data
+     (map notify)
+     (filter even?))
+;; No output printed
+```
+
+* __Refactoring:__ Lazy sequences defer execution, which causes side effects like println to never run unless explicitly realized. Use into with transducers to make evaluation eager and effects reliable.
+
+``` clojure
+(defn notify [x]
+  (println "Notifying value:" x)
+  x)
+
+(def data (range 3))
+
+(into []
+      (comp
+        (map notify)
+        (filter even?))
+      data)
+;; Prints:
+;; Notifying value: 0
+;; Notifying value: 1
+;; Notifying value: 2
+```
+
+## Immutability Violation
+
+``` clojure
+(def countries {})
+
+(defn update-country [country]
+  (def countries (assoc countries (:name country) country)))
+
+(update-country {:name "Brazil" :pop 210})
+(println countries)
+```
+
+* __Refactoring:__ Avoid redefining vars inside functions. Make your updater return a new value so state stays immutable.
+
+``` clojure
+(defn update-country [countries country]
+  (assoc countries (:name country) country))
+
+(let [countries (update-country {} {:name "Brazil" :pop 210})]
+  (println countries))
+```
+
+## External Data Coupling
+
+## Inefficient Filtering
+
+``` clojure
+(require '[clojure.test.check.generators :as gen])
+
+(def gen-even-int
+  (gen/such-that even? gen/int))
+
+(println (gen/sample gen-even-int 5))
+```
+
+* __Refactoring:__ Replace broad, post-filtered generators with ones that produce only valid values, eliminating wasted generation.
+
+``` clojure
+(require '[clojure.test.check.generators :as gen])
+
+(def gen-even-int
+  (gen/fmap #(* 2 %) (gen/choose 0 500)))
+
+(println (gen/sample gen-even-int 5))
+```
