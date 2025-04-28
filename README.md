@@ -25,6 +25,8 @@ This repository catalogs code smells in Clojure, providing descriptions, example
   * Immutability violation
   * External data coupling
   * Inefficient filtering
+  * Overabstracted composition
+  * Unnecessary abstraction
 
 # Introduction
 
@@ -735,3 +737,19 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 (println (gen/sample gen-even-int 5))
 ```
+
+## Overabstracted Composition
+
+* __Description:__ This code smell occurs when excessive use of function composition (combining multiple functions into a single one) and partial application (fixing some arguments of a function to create a new one) makes the code overly abstract, sacrificing readability and maintainability. While function composition is a powerful tool in functional programming, overusing it can lead to deeply nested expressions that obscure the data flow.
+
+* __Example:__
+
+* __Refactoring:__
+
+## Unnecessary abstraction
+
+* __Description:__ This code smell occurs when abstraction is introduced without a clear need, making the code more complex than necessary. This often results in excessive layers of indirection, redundant wrappers, or unnecessary generalization, which obscure the core logic and make maintenance harder.
+
+* __Example:__
+
+* __Refactoring:__
