@@ -1,13 +1,41 @@
-# clojure-code-smells-catalog
+# Catalog of Clojure-related code smells
 This repository catalogs code smells in Clojure, providing descriptions, examples and causes.
 
-## Table of Contents
+# Table of Smells
+* Traditional smells
+  * Duplicated code
+  * Long function
+  * Long parameter list
+  * Divergent change
+  * Primitive obsession
+  * Message chains
+  * Middle man
+  * Inappropriate intimacy
+  * Comments
+  * Mixed paradigms
+  * Library locker
+* Functional-related smells
+  * Overuse of high-order functions
+  * Trivial lambda
+  * Deeply-nested call stacks
+  * Inappropriate collection
+  * Underutilizing clojure features
+  * Premature optimization
+  * Lazy side effects
+  * Immutability violation
+  * External data coupling
+  * Inefficient filtering
+
+# Introduction
 
 
-## Introduction
-
+# Traditional Smells
 
 ## Duplicated Code
+
+* __Description:__ This smell occurs when identical or highly similar code appears in multiple locations within a codebase. It increases maintenance costs and the risk of inconsistencies, as a single change must be manually replicated across all instances. 
+
+* __Example:__
 
 ```clojure
 (defn info-log [message]
@@ -28,6 +56,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ```
 
 ## Long Function
+
+* __Description:__ This code smell occurs when a function grows excessively large, containing too many lines of code or performing too many operations. Long functions are harder to understand, maintain, and test. In functional programming, this smell is analogous to the "Long Method" smell commonly discussed in object-oriented paradigms.
+
+* __Example:__
 
 ```clojure
 (defn process-users [users]
@@ -61,6 +93,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Long Parameter List
 
+* __Description:__ This code smell occurs when a function or method accepts an excessive number of parameters. Long parameter lists make functions harder to understand, more error-prone to call, and more difficult to refactor.
+
+* __Example:__
+
 ```clojure
 (defn create-user [first-name last-name age email address phone]
   {:first-name first-name
@@ -93,6 +129,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ```
 
 ## Divergent Change
+
+* __Description:__ This code smell occurs when a single module or function must be modified in multiple, unrelated ways for different reasons. It indicates poor separation of concerns and suggests that the code is handling responsibilities that should be split across different components.
+
+* __Example:__ 
 
 ```clojure
 (defn process-user [user]
@@ -133,6 +173,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Primitive Obsession
 
+* __Description:__ This code smell occurs when the code relies too much on primitive types (such as integers, strings, or collections)  to represent an object in a domain, rather than defining richer, explicit types. Primitive obsession leads to weak domain modeling, reduces code readability, and makes validation and maintenance harder.
+
+* __Example:__
+
 ``` clojure
 (defn format-price [amount currency]
   (format "%.2f %s" amount currency))
@@ -153,7 +197,17 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Message Chains
 
+* __Description:__ This code smell occurs when you chain method calls on top of other method calls, creating a long, fragile chain of calls. Each object in the chain exposes part of its internal structure to the caller, increasing coupling and making the code harder to read, maintain, and refactor. Changes to intermediate objects often require modifications throughout the chain, leading to brittle designs.
+
+* __Example:__
+
+* __Refactoring:__
+
 ## Middle Man
+
+* __Description:__ This code smell occurs when a function serves mainly to pass data or delegate calls to another function without adding meaningful transformation, validation, or abstraction. This redundant indirection unnecessarily complicates the codebase and obscures the program's true flow. In object-oriented programming this smell often manifests through classes that merely forward method calls.
+
+* __Example:__ 
 
 ``` clojure
 (defn build-person [x]
@@ -181,6 +235,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ```
 
 ## Inappropriate Intimacy
+
+* __Description:__ This code smell occurs when functions, modules, or data structures become overly dependent on each other's internal representations or behaviors. This tight coupling reduces modularity, complicates maintenance, and makes it harder to evolve or reason about the system independently.
+
+* __Example:__ 
 
 ``` clojure
 (def session
@@ -213,6 +271,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ```
 
 ## Comments
+
+* __Description:__ This code smell occurs when functions, modules, or data structures become overly dependent on each other's internal representations or behaviors. This tight coupling reduces modularity, complicates maintenance, and makes it harder to evolve or reason about the system independently.
+
+* __Example:__ 
 
 ``` clojure
 (defn process-user [user]
@@ -256,6 +318,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Mixed Paradigms
 
+* __Description:__ This code smell occurs when two or more distinct programming paradigms are used together in a way that forces interoperability. The blending of approaches — such as functional and imperative or object-oriented and procedural — can introduce confusion, reduce clarity, and complicate the design, as different paradigms impose conflicting constraints and expectations.
+
+* __Example:__ 
+
 ``` clojure
 (defrecord Counter [^:volatile-mutable ^long value])
 
@@ -288,6 +354,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ```
 
 ## Library Locker
+
+* __Description:__ This code smell occurs when an application wraps a third-party library with its own functions or abstractions, often obscuring or complicating the library's usage.
+
+* __Example:__
 
 ``` clojure
 (ns app.http
@@ -363,13 +433,13 @@ This repository catalogs code smells in Clojure, providing descriptions, example
          (assoc ctx :service/name :night-sky)))
 ```
 
-
-
-
-
-
+# Clojure-related Smells
 
 ## Overuse Of High-Order Functions
+
+* __Description:__ This code smell occurs when nearly every function takes or returns another function, leading to excessive abstraction that makes the code unnecessarily complex and harder to follow. While higher-order functions enhance flexibility and reusability, their excessive use can obscure intent, making debugging and reasoning about the code more difficult.
+
+* __Example:__
 
 ``` clojure
 (defn apply-twice [f x]
@@ -396,6 +466,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Trivial Lambda
 
+* __Description:__ This code smell occurs when anonymous functions (lambdas) are excessively used instead of named functions, reducing code clarity and reusability. This is especially problematic when lambda expressions are chained or become overly complex, making the code harder to read, understand, and maintain.
+
+* __Example:__ 
+
 ``` clojure
 (defn square [x]
   (* x x))
@@ -417,6 +491,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ```
 
 ## Deeply-nested Call Stacks
+
+* __Description:__ This code smell occurs when function calls are nested to a significant depth, resulting in a long chain of execution on the stack. This makes debugging more difficult, increases the risk of stack overflow, and reduces code readability by obscuring the control flow.
+
+* __Example:__
 
 ``` clojure
 (defn sanitize [s]
@@ -460,6 +538,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Inappropriate Collection
 
+* __Description:__ This code smell occurs when a data structure is used in a way that contradicts its intended purpose, leading to inefficient operations. For example, if a sequential collection is frequently scanned to locate elements by key, it likely indicates that an associative structure (e.g., a map or dictionary) would be more appropriate, improving both performance and clarity.
+
+* __Example:__
+
 ``` clojure
 (def people
   [{:person/name "Fred"}
@@ -484,6 +566,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Underutilizing Clojure Features
 
+* __Description:__ This code smell occurs when built-in language capabilities, such as higher-order functions, macros, or immutable data structures, are ignored in favor of more verbose or imperative approaches. This leads to less idiomatic, more error-prone, and harder-to-maintain code.
+
+* __Example:__
+
 ``` clojure
 (defn duplicate-and-wrap [x]
   [(str "<" x ">") (str "<" x ">")])
@@ -507,6 +593,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ```
 
 ## Premature Optimization
+
+* __Description:__ This code smell occurs when code is optimized too early, before verifying if performance is an actual bottleneck, leading to unnecessary complexity and reduced maintainability. For example, when `with-retry` is used to repeatedly attempt the same operation without assessing whether the real issue—such as incorrect credentials or permanent network failures—can be fixed, wasting resources instead of addressing the root cause.
+
+* __Example:__
 
 ``` clojure
 (defmacro with-retry [[attempts timeout] & body]
@@ -548,6 +638,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Lazy Side Effects
 
+* __Description:__ This code smell occurs when side effects (such as state changes or external interactions) happen within lazy evaluated code. Since lazy evaluation delays computation until needed, these side effects may not execute as expected, leading to unpredictable behavior and making the code harder to debug and maintain. 
+
+* __Example:__
+
 ``` clojure
 (defn notify [x]
   (println "Notifying value:" x)
@@ -583,6 +677,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## Immutability Violation
 
+* __Description:__ This code smell Immutability occurs when mutable state is used in a language or paradigm that emphasizes immutability (such as Clojure), leading to side effects, reduced predictability, and harder-to-maintain code. 
+
+* __Example:__
+
 ``` clojure
 (def countries {})
 
@@ -605,7 +703,18 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ## External Data Coupling
 
+* __Description:__ This code smell occurs when utilizing raw data from external sources as-is within your application, leading to tight coupling between your code and the external data structure. It is about how you model and transform external information.
+
+* __Example:__
+
+* __Refactoring:__
+
+
 ## Inefficient Filtering
+
+* __Description:__ This code smell occurs when the data generator makes excessive use of filters (such as such-that) to constrain the generated values. Instead of genering only valid values directly, the generator creates a large number of values and filters them afterward, resulting in resource waste and potential performance issues.
+
+* __Example:__
 
 ``` clojure
 (require '[clojure.test.check.generators :as gen])
