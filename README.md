@@ -480,6 +480,8 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ## Inappropriate Collection
 
 ``` clojure
+(ns examples.smells.inappropriate-collection)
+
 (def people
   [{:person/name "Fred"}
    {:person/name "Ethel"}
@@ -489,16 +491,23 @@ This repository catalogs code smells in Clojure, providing descriptions, example
   [person people]
   (some #(= person (:person/name %)) people))
 
-(person-in-people? "Fred" people) ;; => true
+(println (boolean (person-in-people? "Fred" people)))
+(println (boolean (person-in-people? "Alice" people)))
 ```
 
 * __Refactoring:__ Scanning a sequential collection to find an item by a key is inefficient and obscures intent. Use an associative structure like group-by to enable fast, direct access.
 
 ``` clojure
-(def collected-people
-  (group-by :person/name people))
+(def people
+  [{:person/name "Fred"}
+   {:person/name "Ethel"}
+   {:person/name "Lucy"}])
 
-(contains? collected-people "Fred") ;; => true
+(def collected-people
+  (into {} (map (fn [p] [(:person/name p) p]) people)))
+
+(println (contains? collected-people "Fred")) 
+(println (contains? collected-people "Alice"))
 ```
 
 ## Underutilizing Clojure Features
@@ -510,7 +519,6 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 (def values ["a" "b" "c"])
 
 (println (apply concat (map duplicate-and-wrap values)))
-;; => ("<a>" "<a>" "<b>" "<b>" "<c>" "<c>")
 ```
 
 * __Refactoring:__ Using apply concat (map ...) is functionally correct but unnecessarily verbose. Clojure provides mapcat to express this pattern more idiomatically and efficiently.
