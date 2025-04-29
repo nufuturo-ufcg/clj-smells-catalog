@@ -7,6 +7,7 @@ This repository catalogs code smells in Clojure, providing descriptions, example
   * [Long function](#long-function)
   * [Long parameter list](#long-parameter-list)
   * [Divergent change](#divergent-change)
+  * [Shotgun surgery](#shotgun-surgery)
   * [Primitive obsession](#primitive-obsession)
   * [Message chains](#message-chains)
   * [Middle man](#middle-man)
@@ -171,6 +172,14 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 (println (process-user {:first-name "Alice" :last-name "Smith" :age 22}))
 ```
+
+## Shotgun Surgery
+
+* __Description:__ This code smell occurs when a single type of change requires numerous small edits across many different modules, functions, or files. When modifications are spread throughout the codebase, it becomes difficult to identify all the affected areas, increasing the risk of introducing inconsistencies or missing critical updates.
+
+* __Example:__ 
+
+* __Refactoring:__
 
 ## Primitive Obsession
 
