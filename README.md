@@ -2,34 +2,34 @@
 This repository catalogs code smells in Clojure, providing descriptions, examples and causes.
 
 # Table of Smells
-* Traditional smells
-  * Duplicated code
-  * Long function
-  * Long parameter list
-  * Divergent change
-  * Primitive obsession
-  * Message chains
-  * Middle man
-  * Inappropriate intimacy
-  * Comments
-  * Mixed paradigms
-  * Library locker
-* Functional-related smells
-  * Overuse of high-order functions
-  * Trivial lambda
-  * Deeply-nested call stacks
-  * Inappropriate collection
-  * Underutilizing clojure features
-  * Premature optimization
-  * Lazy side effects
-  * Immutability violation
-  * External data coupling
-  * Inefficient filtering
-  * Overabstracted composition
-  * Unnecessary abstraction
+* [Traditional smells](#traditional-smells)
+  * [Duplicated code](#duplicated-code)
+  * [Long function](#long-function)
+  * [Long parameter list](#long-parameter-list)
+  * [Divergent change](#divergent-change)
+  * [Shotgun surgery](#shotgun-surgery)
+  * [Primitive obsession](#primitive-obsession)
+  * [Message chains](#message-chains)
+  * [Middle man](#middle-man)
+  * [Inappropriate intimacy](#inappropriate-intimacy)
+  * [Comments](#comments)
+  * [Mixed paradigms](#mixed-paradigms)
+  * [Library locker](#library-locker)
+* [Clojure-related smells](#clojure-related-smells)
+  * [Overuse of high-order functions](#overuse-of-high-order-functions)
+  * [Trivial lambda](#trivial-lambda)
+  * [Deeply-nested call stacks](#deeply-nested-call-stacks)
+  * [Inappropriate collection](#inappropriate-collection)
+  * [Underutilizing clojure features](#underutilizing-clojure-features)
+  * [Premature optimization](#premature-optimization)
+  * [Lazy side effects](#lazy-side-effects)
+  * [Immutability violation](#lazy-side-effects)
+  * [External data coupling](#external-data-coupling)
+  * [Inefficient filtering](#inefficient-filtering)
+  * [Overabstracted composition](#overabstracted-composition)
+  * [Unnecessary abstraction](#unnecessary-abstraction)
 
 # Introduction
-
 
 # Traditional Smells
 
@@ -175,6 +175,14 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 (println (process-user {:first-name "Alice" :last-name "Smith" :age 22}))
 ```
+
+## Shotgun Surgery
+
+* __Description:__ This code smell occurs when a single type of change requires numerous small edits across many different modules, functions, or files. When modifications are spread throughout the codebase, it becomes difficult to identify all the affected areas, increasing the risk of introducing inconsistencies or missing critical updates.
+
+* __Example:__ 
+
+* __Refactoring:__
 
 ## Primitive Obsession
 
