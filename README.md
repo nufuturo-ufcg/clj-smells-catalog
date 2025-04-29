@@ -14,10 +14,13 @@ This repository catalogs code smells in Clojure, providing descriptions, example
   (str "[INFO] " (clojure.string/upper-case message) " - " (java.time.Instant/now)))
 
 (defn error-log [message]
-  (str "[ERROR] " (clojure.string/upper-case message) " - " (java.time.Instant/now)))=
+  (str "[ERROR] " (clojure.string/upper-case message) " - " (java.time.Instant/now)))
+
+(println (info-log "Process started"))
+(println (error-log "File not found"))
 ```
 
-* __Refactoring:__ Instead of duplicating the log formatting logic for different log levels, it is better to refactor the code by centralizing the formatting responsibility in a single function. This refactoring improves maintainability by reducing duplicated code and making it easier to modify the log structure if needed.
+* __Refactoring:__ When multiple functions perform nearly identical operations with only slight variations (like a fixed log level), it's better to unify the shared logic into a single, parameterized function. This reduces repetition, improves clarity, and makes future changes easier to implement.
 
 ```clojure
 (defn format-log [level message]
@@ -168,7 +171,7 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 (println (build-persons people))
 ```
 
-* __Refactoring:__ The build-persons function only delegates to map without adding any behavior (Middle Man smell). Remove it and call map directly.
+* __Refactoring:__ When a function only serves as a pass-through to another function (e.g., wrapping map, filter, or similar without adding any new behavior), it introduces unnecessary indirection. It's better to remove the intermediary and use the higher-order function directly. This simplifies the code, makes dependencies more explicit, and improves maintainability.
 
 ``` clojure
 (defn build-person [x]
@@ -184,10 +187,10 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 ``` clojure
 (def session
-  (proxy [IDeref] []
-    (deref [this]
-      (read-session (.store this)))
-    (store [this]
+  (proxy [clojure.lang.IDeref] []
+    (deref []
+      {:user-id 42 :role "admin"})
+    (store []
       {:type ::memory-store})))
 
 (println @session)
@@ -215,6 +218,13 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 ## Comments
 
 ``` clojure
+(ns examples.smells.comments
+  (:require [clojure.string :as str]))
+
+(defn save-user [user]
+  ;; simulate saving to database
+  (println "Saving user:" user))
+
 (defn process-user [user]
   ;; validate input
   (when-not (:email user)
@@ -223,18 +233,26 @@ This repository catalogs code smells in Clojure, providing descriptions, example
     (throw (Exception. "Missing ID")))
 
   ;; transform data
-  (let [username (clojure.string/lower-case (:email user))
+  (let [username (str/lower-case (:email user))
         uid (str "user-" (:id user))]
 
     ;; store in database
     (save-user {:username username
                 :uid uid
                 :email (:email user)})))
+
+(process-user {:id 1 :email "Exemplo@Email.com"})
 ```
 
 * __Refactoring:__ Comments are being used to separate logical sections of code. Instead, extract those sections into well-named functions. This improves readability and avoids the need for explanatory comments.
 
 ``` clojure
+(ns examples.smells.comments
+  (:require [clojure.string :as str]))
+
+(defn save-user [user]
+  (println "Saving user:" user))
+
 (defn validate-user [user]
   (when-not (:email user)
     (throw (Exception. "Missing email")))
@@ -243,7 +261,7 @@ This repository catalogs code smells in Clojure, providing descriptions, example
   user)
 
 (defn transform-user [user]
-  {:username (clojure.string/lower-case (:email user))
+  {:username (str/lower-case (:email user))
    :uid (str "user-" (:id user))
    :email (:email user)})
 
@@ -252,24 +270,25 @@ This repository catalogs code smells in Clojure, providing descriptions, example
       validate-user
       transform-user
       save-user))
+
+(process-user {:id 1 :email "Exemplo@Email.com"})
 ```
 
 ## Mixed Paradigms
 
 ``` clojure
-(defrecord Counter [^:volatile-mutable ^long value])
+(defrecord Counter [value])
 
 (defn make-counter []
-  (->Counter 0))
+  (->Counter (atom 0)))
 
 (defn increment-counter [^Counter c]
-  (set! (.value c) (inc (.value c)))
-  (.value c))
+  (swap! (:value c) inc))
 
 (def counter (make-counter))
 
-(println (increment-counter counter)) ;; => 1
-(println (increment-counter counter)) ;; => 2
+(println (increment-counter counter))
+(println (increment-counter counter))
 ```
 
 * __Refactoring:__ This mixes object-oriented mutable state (set!, .value) into Clojure's functional paradigm, making the code imperative, thread-unsafe, and non-idiomatic. Prefer functional state tools like atom.
@@ -283,8 +302,8 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 (def counter (make-counter))
 
-(println (increment-counter counter)) ;; => 1
-(println (increment-counter counter)) ;; => 2
+(println (increment-counter counter))
+(println (increment-counter counter))
 ```
 
 ## Library Locker
