@@ -1,3 +1,5 @@
+(ns examples.smells.inappropriate-intimacy)
+
 (def session
   (proxy [clojure.lang.IDeref] []
     (deref []

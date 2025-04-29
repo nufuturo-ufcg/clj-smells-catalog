@@ -1,3 +1,5 @@
+(ns examples.smells.long-parameter-list)
+
 (defn create-user [first-name last-name age email address phone]
   {:first-name first-name
    :last-name last-name

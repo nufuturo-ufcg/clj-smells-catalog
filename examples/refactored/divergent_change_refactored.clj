@@ -1,3 +1,5 @@
+(ns examples.refactored.divergent-change-refactored)
+
 (defn format-name [user]
   (str (:first-name user) " " (:last-name user)))
 

@@ -1,3 +1,5 @@
+(ns examples.refactored.long-parameter-list-refactored)
+
 (defn create-user [user-info]
   {:first-name (:first-name user-info)
    :last-name (:last-name user-info)

@@ -1,3 +1,6 @@
+(ns examples.smells.duplicated-code
+  (:require [clojure.string :as str]))
+
 (defn info-log [message]
   (str "[INFO] " (clojure.string/upper-case message) " - " (java.time.Instant/now)))
 

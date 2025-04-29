@@ -1,3 +1,5 @@
+(ns examples.smells.primitive-obsession)
+
 (defn format-price [amount currency]
   (format "%.2f %s" amount currency))
 

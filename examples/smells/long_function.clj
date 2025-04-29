@@ -1,3 +1,5 @@
+(ns examples.smells.long-function)
+
 (defn process-users [users]
   (let [filtered (filter #(> (:age %) 18) users)
         formatted (map #(str (:first-name %) " " (:last-name %)) filtered)

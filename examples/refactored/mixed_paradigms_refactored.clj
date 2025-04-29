@@ -1,3 +1,5 @@
+(ns examples.refactored.mixed-paradigms-refactored)
+
 (defn make-counter []
   (atom 0))
 

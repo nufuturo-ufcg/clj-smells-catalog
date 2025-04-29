@@ -1,4 +1,4 @@
-(ns examples.smells.comments
+(ns examples.refactored.comments-refactored
   (:require [clojure.string :as str]))
 
 (defn save-user [user]

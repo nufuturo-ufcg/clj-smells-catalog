@@ -1,3 +1,5 @@
+(ns examples.refactored.long-function-refactored)
+
 (defn is-adult? [user]
   (> (:age user) 18))
 

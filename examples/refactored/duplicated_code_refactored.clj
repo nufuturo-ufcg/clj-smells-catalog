@@ -1,3 +1,5 @@
+(ns examples.refactored.duplicated-code-refactored)
+
 (defn format-log [level message]
   (str "[" level "] " (.toUpperCase message) " - " (java.time.Instant/now)))
 

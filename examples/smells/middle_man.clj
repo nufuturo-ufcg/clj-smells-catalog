@@ -1,3 +1,5 @@
+(ns examples.smells.middle-man)
+
 (defn build-person [x]
   {:name (:name x) :age (:age x)})
 

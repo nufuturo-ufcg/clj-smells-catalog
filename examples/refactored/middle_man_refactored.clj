@@ -1,3 +1,5 @@
+(ns examples.refactored.middle-man-refactored)
+
 (defn build-person [x]
   {:name (:name x) :age (:age x)})
 

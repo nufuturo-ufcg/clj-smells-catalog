@@ -1,3 +1,5 @@
+(ns examples.refactored.primitive-obsession-refactored)
+
 (defrecord Money [amount currency])
 
 (defn format-price [^Money m]

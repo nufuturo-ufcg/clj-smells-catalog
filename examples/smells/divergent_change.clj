@@ -1,3 +1,5 @@
+(ns examples.smells.divergent-change)
+
 (defn process-user [user]
   (let [full-name (str (:first-name user) " " (:last-name user))
         valid-age? (>= (:age user) 18)]

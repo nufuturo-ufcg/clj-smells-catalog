@@ -1,3 +1,5 @@
+(ns examples.refactored.inappropriate-intimacy-refactored)
+
 (defprotocol SessionStore
   (read-session [this]))
 

@@ -1,3 +1,5 @@
+(ns examples.smells.mixed-paradigms)
+
 (defrecord Counter [value])
 
 (defn make-counter []
