@@ -181,8 +181,58 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 * __Description:__ This code smell occurs when a single type of change requires numerous small edits across many different modules, functions, or files. When modifications are spread throughout the codebase, it becomes difficult to identify all the affected areas, increasing the risk of introducing inconsistencies or missing critical updates.
 
 * __Example:__ 
+``` clojure
+(defn save-user [user]
+  (println "Saving to DB:" (:name user) (:email user) (:age user)))
 
-* __Refactoring:__
+(defn send-welcome-email [user]
+  (println "Sending email to:" (:email user)))
+
+(defn track-user [user]
+  (println "Tracking new user:" (:name user) (:age user)))
+
+(defn create-user [name email age]
+  (let [user {:name name
+              :email email
+              :age age}]
+    (save-user user)
+    (send-welcome-email user)
+    (track-user user)))
+    
+(comment
+  (create-user "Alice" "alice@example.com" 30))
+```
+
+* __Refactoring:__ To refactor the smell, centralize the logic or data structure that is being repeatedly modified across the codebase. Encapsulate related operations—like construction, access, or transformation—into a single module or set of functions. Update all scattered usages to rely on this central abstraction.
+
+``` clojure
+(defn make-user [{:keys [name email age]}]
+  {:name name
+   :email email
+   :age age})
+
+(defn get-name [user] (:name user))
+(defn get-email [user] (:email user))
+(defn get-age [user] (:age user))
+
+(defn save-user [user]
+  (println "Saving to DB:" (get-name user) (get-email user) (get-age user)))
+
+(defn send-welcome-email [user]
+  (println "Sending email to:" (get-email user)))
+
+(defn track-user [user]
+  (println "Tracking new user:" (get-name user) (get-age user)))
+
+(defn create-user [name email age]
+  (let [user (make-user {:name name :email email :age age})]
+    (save-user user)
+    (send-welcome-email user)
+    (track-user user)))
+    
+(comment
+  (create-user "Alice" "alice@example.com" 30))
+```
 
 ## Primitive Obsession
 
@@ -743,8 +793,49 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 * __Description:__ This code smell occurs when utilizing raw data from external sources as-is within your application, leading to tight coupling between your code and the external data structure. It is about how you model and transform external information.
 
 * __Example:__
+``` clojure
+;; Raw external data received from an API or other system
+(def raw-user-data
+  {:user_name "alice"
+   :user_age 30
+   :user_email "alice@example.com"})
 
-* __Refactoring:__
+(defn process-user [raw-user]
+  (println "Welcome," (:user_name raw-user))
+  (println "Your email is:" (:user_email raw-user))
+  (if (> (:user_age raw-user) 18)
+    (println "You are an adult.")
+    (println "You are a minor.")))
+
+(comment
+  (process-user raw-user-data))
+```
+
+* __Refactoring:__ Transform raw external data into a well-defined internal representation as early as possible. Encapsulate this transformation in a single function or module. Then, ensure the rest of your application interacts only with the internal structure.
+
+``` clojure
+(def raw-user-data
+  {:user_name "alice"
+   :user_age 30
+   :user_email "alice@example.com"})
+
+;; Transform external data into an internal model
+(defn transform-user [external-user]
+  {:name  (:user_name external-user)
+   :age   (:user_age external-user)
+   :email (:user_email external-user)})
+
+(defn process-user [user]
+  (println "Welcome," (:name user))
+  (println "Your email is:" (:email user))
+  (if (> (:age user) 18)
+    (println "You are an adult.")
+    (println "You are a minor.")))
+
+(comment
+  (let [user (transform-user raw-user-data)]
+    (process-user user)))
+```
 
 
 ## Inefficient Filtering
@@ -778,13 +869,78 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 * __Description:__ This code smell occurs when excessive use of function composition (combining multiple functions into a single one) and partial application (fixing some arguments of a function to create a new one) makes the code overly abstract, sacrificing readability and maintainability. While function composition is a powerful tool in functional programming, overusing it can lead to deeply nested expressions that obscure the data flow.
 
 * __Example:__
+``` clojure
+(defn get-user [data] (:user data))
+(defn get-email [user] (:email user))
+(defn trim [s] (str/trim s))
+(defn lower [s] (str/lower-case s))
+(def domain (comp second (partial split-at "@")))
 
-* __Refactoring:__
+;; Compose everything into a pipeline
+(def process-email
+  (comp
+    domain
+    lower
+    trim
+    get-email
+    get-user))
+
+(defn describe-user [data]
+  (str "Domain: " (process-email data)))
+
+(comment
+  (describe-user {:user {:email "  Bob@Example.org  "}})
+)
+```
+
+* __Refactoring:__ Replace chains of tiny composed or partially applied functions with more explicit and readable steps. Use `let` bindings or threading macros (`->`, `->>`) to clarify how data flows through each transformation.
+
+``` clojure
+(defn extract-domain [data]
+  (let [email (get-in data [:user :email])
+        cleaned (-> email str/trim str/lower-case)
+        parts   (str/split cleaned #"@")]
+    (second parts)))
+
+(defn describe-user [data]
+  (str "Domain: " (extract-domain data)))
+
+(comment
+  (describe-user {:user {:email "  Bob@Example.org  "}})
+)
+```
 
 ## Unnecessary abstraction
 
 * __Description:__ This code smell occurs when abstraction is introduced without a clear need, making the code more complex than necessary. This often results in excessive layers of indirection, redundant wrappers, or unnecessary generalization, which obscure the core logic and make maintenance harder.
 
 * __Example:__
+``` clojure
+;; Unnecessarily abstracted function just to get a user's name
+(defn extract-user [data] (:user data))
 
-* __Refactoring:__
+(defn extract-name [user] (:name user))
+
+(defn get-user-name [data]
+  (let [user (extract-user data)
+        name (extract-name user)]
+    name))
+
+(defn greet-user [data]
+  (str "Hello, " (get-user-name data)))
+
+(comment
+  (greet-user {:user {:name "Charlie"}})
+)
+```
+
+* __Refactoring:__ Remove indirection layers that don't add real clarity, reuse, or flexibility. Inline trivial abstractions and rely on expressive language features instead. Favor simplicity and directness to keep logic clear and maintainable.
+
+``` clojure
+(defn greet-user [data]
+  (str "Hello, " (get-in data [:user :name])))
+
+(comment
+  (greet-user {:user {:name "Charlie"}})
+)
+```
