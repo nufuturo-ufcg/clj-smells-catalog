@@ -264,7 +264,39 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 
 * __Example:__
 
-* __Refactoring:__
+``` clojure
+(def user
+  {:profile {:contact {:email "user@example.com"}}})
+
+(defn get-user-email [user]
+  (-> user :profile :contact :email))
+
+(println (get-user-email user))
+```
+
+* __Refactoring:__ Avoid chaining multiple calls to access deeply nested data structures. Instead, extract intermediate lookups into separate helper functions. This reduces coupling to internal representations, improves readability, and makes the code easier to update if the structure changes.
+
+``` clojure
+(def user
+  {:profile {:contact {:email "user@example.com"}}})
+
+(defn user-profile [user]
+  (:profile user))
+
+(defn user-contact [profile]
+  (:contact profile))
+
+(defn user-email [contact]
+  (:email contact))
+
+(defn get-user-email [user]
+  (-> user
+      user-profile
+      user-contact
+      user-email))
+
+(println (get-user-email user))
+```
 
 ## Middle Man
 
@@ -439,77 +471,39 @@ This repository catalogs code smells in Clojure, providing descriptions, example
 * __Example:__
 
 ``` clojure
-(ns app.http
-  (:require [app.auth-tokens :as auth]
-            [clj-http.client :as http]
-            [clojure.tools.logging :as log]
-            [jsonista :as j]))
+(ns examples.smells.library-locker
+  (:require [clj-http.client :as client]))
 
-(defn get
-  "Custom wrapper around clj-http/client `get` with logging, tracing, auth, and JSON parsing."
-  [url
-   {:keys [query-params] :as http-options}
-   {user-id    :user/id
-    star-id    :star/id
-    root-trace :root-trace/id
-    request-id :request/id
-    service    :service/name
-    :keys      [originating-system]
-    :or        {originating-system "observatory"}
-    :as options}]
-  (log/infof "User %s is requesting star %s. Request id: %s. Trace id %s"
-             user-id request-id root-trace)
-  (let [response (http/get url
-                           (-> http-options
-                               (assoc :oauth (get auth/tokens service))
-                               (assoc-in [:headers :user-id] user-id)
-                               (assoc-in [:headers :request-id] request-id)
-                               (assoc-in [:headers :root-trace] root-trace)
-                               (assoc-in [:headers :originating-system] originating-system)))
-        body (j/read-value (:body response))]
-    (log/infof "Received star: %s. Request id: %s. Trace id %s"
-               body request-id root-trace)
-    body))
+(defn do-get [url]
+  (client/get url))
+
+(defn do-post [url data]
+  (client/post url {:body data}))
+
+(defn fetch-data []
+  (do-get "https://httpbin.org/get"))
+
+(defn send-data [info]
+  (do-post "https://httpbin.org/post" info))
+
+(println (fetch-data))
+(println (send-data "test"))
 ```
 
-* __Refactoring:__ The get function wraps a third-party library (clj-http) and mixes multiple concerns (logging, auth, tracing, parsing). This tightly couples the app to that library and makes future changes harder. Use function composition to separate and reuse behaviors.
+* __Refactoring:__ Remove unnecessary wrappers and rely directly on the third-party library. This improves clarity, avoids indirection, and keeps the code simpler and easier to maintain.
 
 ``` clojure
-(defn inject-auth [service req]
-  (assoc-in req [:headers :oauth] (get auth/tokens service)))
+(ns examples.refactored.library-locker-refactored
+  (:require [clj-http.client :as client]))
 
-(defn inject-user-id [user-id req]
-  (assoc-in req [:headers :user-id] user-id))
+(defn fetch-data []
+  (client/get "https://httpbin.org/get"))
 
-(defn inject-trace-id [trace-id req]
-  (assoc-in req [:headers :root-trace] trace-id))
+(defn send-data [info]
+  (client/post "https://httpbin.org/post" {:body info}))
 
-(defn inject-origin [origin req]
-  (assoc-in req [:headers :originating-system] origin))
-
-(defn prepare-request
-  [{:keys [user/id root-trace/id service/name originating-system]
-    :or   {originating-system "observatory"}}]
-  (comp
-    (partial inject-auth service/name)
-    (partial inject-user-id user/id)
-    (partial inject-trace-id root-trace/id)
-    (partial inject-origin originating-system)))
-
-(defn fetch
-  "Generic HTTP fetch with optional transformations and logging"
-  [url http-options context]
-  (let [req-builder (prepare-request context)
-        full-options (req-builder http-options)
-        response (http/get url full-options)]
-    (j/read-value (:body response))))
-
-;; Em `app.service.night-sky`
-(defn find-star
-  [{:user/keys [id] :star/keys [id] :root-trace/keys [id]} :as ctx]
-  (fetch "http://host.night-sky/api/star"
-         {:query-params {:star-id id}}
-         (assoc ctx :service/name :night-sky)))
+(println (fetch-data))
+(println (send-data "test"))
 ```
 
 # Clojure-related Smells
