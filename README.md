@@ -31,7 +31,6 @@ This repository catalogs code smells in Clojure, providing descriptions, example
   * [Positional return values](#positional-return-values)
 * [Clojure-specific smells](#clojure-specific-smells)
   * [Unnecessary macros](#unnecessary-macros)
-  * [Underutilizing clojure features](#underutilizing-clojure-features)
   * [Immutability violation](#lazy-side-effects)
   * [Namespaced keys neglect](#namespaced-keys-neglect)
   * [Improper emptiness check](#improper-emptiness-check)
