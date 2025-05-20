@@ -1,1 +1,0 @@
-["^ ","~$print-evens",["^ ","~:row",3,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$examples.clojure-specific.refactored.production-doall-re","~:top-ns","^7","~:type","~:fn"],"~:filename","/Users/jose.neto.nufuturo/Desktop/UFCG/clj-smells/clojure-code-smells-catalog/examples/clojure_specific/refactored/production_doall_refactored.clj"]

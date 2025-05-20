@@ -1,1 +1,0 @@
-["^ ","~$transform",["^ ","~:row",3,"~:col",1,"~:fixed-arities",["~#set",[1]],"~:name","^0","~:ns","~$examples.clojure-specific.refactored.thread-ignorance-ref","~:top-ns","^7","~:type","~:fn"],"~:filename","/Users/jose.neto.nufuturo/Desktop/UFCG/clj-smells/clojure-code-smells-catalog/examples/clojure_specific/refactored/thread_ignorance_refactored.clj"]
