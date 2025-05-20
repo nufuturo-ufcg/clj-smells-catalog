@@ -1,0 +1,1 @@
+["^ ","~$double-nums",["^ ","~:row",3,"~:col",1,"~:fixed-arities",["~#set",[1]],"~:name","^0","~:ns","~$examples.functional.smells.explicit-r","~:top-ns","^7","~:type","~:fn"],"~:filename","/Users/jose.neto.nufuturo/Desktop/UFCG/clj-smells/clojure-code-smells-catalog/examples/functional/smells/explicit_recursion.clj"]
