@@ -1,5 +1,23 @@
 # Catalog of Clojure-related code smells
-This repository catalogs code smells in Clojure, providing descriptions, examples and causes.
+This repository provides a catalog of code smells commonly found in Clojure projects. Code smells are patterns in the source code that may indicate deeper design or implementation problems, negatively affecting maintainability, scalability, and readability over time. While the concept of code smells is well-established in object-oriented programming, functional languages like Clojure bring their own paradigms — along with both specific smells and adaptations of traditional ones that remain highly relevant.
+
+The catalog is organized into three main categories:
+
+- **Traditional smells**: These are classic software engineering smells — such as Duplicated Code and Long Function — that continue to directly affect Clojure projects, even within a functional context. Despite originally being associated with object-oriented programming, these problems manifest in different but equally harmful ways in functional code.
+
+- **Functional-related smells**: These arise from practices, patterns, or misuse of functional programming concepts. They directly impact Clojure code quality by exploiting aspects like overuse of composition, improper use of higher-order functions, explicit recursion, or hidden side effects.
+
+- **Clojure-specific smells**: These reflect bad practices, misuse, or pitfalls that are particular to the Clojure ecosystem. They stem from the language’s abstractions, idiomatic constructions, and common libraries.
+
+## About the Example Structure
+
+For each smell in the catalog, the documentation follows a consistent and practical structure:
+
+- **Description**: A clear explanation of the smell, its symptoms, and the impact it can have in the context of Clojure development.
+- **Example**: A Clojure code snippet that illustrates how the problem commonly appears in practice. The examples are straightforward and designed to represent situations frequently encountered in real-world development.
+- **Refactoring**: A proposed improvement, usually based on idiomatic Clojure practices and functional programming principles. The refactor aims to increase clarity, reduce complexity, and improve code maintainability.
+
+This structure ensures that developers not only understand how each smell manifests in Clojure projects but also how to effectively remediate it while respecting both the language's principles and general software engineering best practices.
 
 # Table of Smells
 * [Traditional smells](#traditional-smells)
