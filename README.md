@@ -16,6 +16,7 @@ For each smell in the catalog, the documentation follows a consistent and practi
 - **Description**: A clear explanation of the smell, its symptoms, and the impact it can have in the context of Clojure development.
 - **Example**: A Clojure code snippet that illustrates how the problem commonly appears in practice. The examples are straightforward and designed to represent situations frequently encountered in real-world development.
 - **Refactoring**: A proposed improvement, usually based on idiomatic Clojure practices and functional programming principles. The refactor aims to increase clarity, reduce complexity, and improve code maintainability.
+- **Refactored Example**: A revised Clojure code snippet demonstrating the improved version after refactoring, highlighting the benefits of the proposed solution.
 
 This structure ensures that developers not only understand how each smell manifests in Clojure projects but also how to effectively remediate it while respecting both the language's principles and general software engineering best practices.
 
