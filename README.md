@@ -1,24 +1,22 @@
 # Catalog of Clojure-related code smells
-This repository provides a catalog of code smells commonly found in Clojure projects. Code smells are patterns in the source code that may indicate deeper design or implementation problems, negatively affecting maintainability, scalability, and readability over time. While the concept of code smells is well-established in object-oriented programming, functional languages like Clojure bring their own paradigms — along with both specific smells and adaptations of traditional ones that remain highly relevant.
 
-The catalog is organized into three main categories:
+This repository presents a catalog of code smells relevant to the Clojure ecosystem. The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
 
-- **Traditional smells**: These are classic software engineering smells — such as Duplicated Code and Long Function — that continue to directly affect Clojure projects, even within a functional context. Despite originally being associated with object-oriented programming, these problems manifest in different but equally harmful ways in functional code.
+Given the lack of established academic studies on code smells in functional programming languages — apart from the Elixir work — we conducted a grey literature review, focusing on informal sources and developer discussions.
 
-- **Functional-related smells**: These arise from practices, patterns, or misuse of functional programming concepts. They directly impact Clojure code quality by exploiting aspects like overuse of composition, improper use of higher-order functions, explicit recursion, or hidden side effects.
+Our investigation was guided by the following research questions:
 
-- **Clojure-specific smells**: These reflect bad practices, misuse, or pitfalls that are particular to the Clojure ecosystem. They stem from the language’s abstractions, idiomatic constructions, and common libraries.
+- **RQ1:** Do Clojure developers discuss traditional code smells?
+- **RQ2:** Do they discuss other types of smells, such as those specific to the language or ecosystem?
+- **RQ3:** Are there any static analysis tools for Clojure that detect these smells?
 
-## About the Example Structure
+## Methodology for Catalog Construction
 
-For each smell in the catalog, the documentation follows a consistent and practical structure:
+On February 13, 2025, we conducted a manual Google search using a broad query adapted from the Elixir study. We reviewed the top 60 results and selected 15 documents that addressed at least one research question. Documents were analyzed collaboratively through cross-review to identify recurring smells.
 
-- **Description**: A clear explanation of the smell, its symptoms, and the impact it can have in the context of Clojure development.
-- **Example**: A Clojure code snippet that illustrates how the problem commonly appears in practice. The examples are straightforward and designed to represent situations frequently encountered in real-world development.
-- **Refactoring**: A proposed improvement, usually based on idiomatic Clojure practices and functional programming principles. The refactor aims to increase clarity, reduce complexity, and improve code maintainability.
-- **Refactored Example**: A revised Clojure code snippet demonstrating the improved version after refactoring, highlighting the benefits of the proposed solution.
+The identified smells were organized in this repository, each with a description, code example, refactoring suggestion, and refactored version.
 
-This structure ensures that developers not only understand how each smell manifests in Clojure projects but also how to effectively remediate it while respecting both the language's principles and general software engineering best practices.
+This catalog reflects the current stage of our ongoing study. We plan to expand it in future phases, following the model of the Elixir work. Contributions are welcome via issues and pull requests.
 
 # Table of Smells
 * [Traditional smells](#traditional-smells)
@@ -62,8 +60,6 @@ This structure ensures that developers not only understand how each smell manife
   * [Thread ignorance](#thread-ignorance)
   * [Nested forms](#nested-forms)
   * [Direct use of `clojure.lang.RT`](#direct-usage-of-clojurelangrt)
-
-# Introduction
 
 # Traditional Smells
 
