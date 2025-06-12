@@ -2,17 +2,7 @@
 
 This repository presents a catalog of code smells relevant to the Clojure ecosystem. The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
 
-Given the lack of established academic studies on code smells in functional programming languages — apart from the Elixir work — we conducted a grey literature review, focusing on informal sources and developer discussions.
-
-Our investigation was guided by the following research questions:
-
-- **RQ1:** Do Clojure developers discuss traditional code smells?
-- **RQ2:** Do they discuss other types of smells, such as those specific to the language or ecosystem?
-- **RQ3:** Are there any static analysis tools for Clojure that detect these smells?
-
-## Methodology for Catalog Construction
-
-On February 13, 2025, we conducted a manual Google search using a broad query adapted from the Elixir study. We reviewed the top 60 results and selected 15 documents that addressed at least one research question. Documents were analyzed collaboratively through cross-review to identify recurring smells.
+In a nutshell, we analyzed developer discussions from forums, blogs, and other practitioner sources to identify recurring problematic patterns that experienced Clojure developers frequently encounter and discuss. The catalog was compiled from real-world examples shared by practitioners across various online platforms.
 
 The identified smells were organized in this repository, each with a description, code example, refactoring suggestion, and refactored version.
 
