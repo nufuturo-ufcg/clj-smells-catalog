@@ -38,7 +38,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   * [Positional return values](#positional-return-values)
 * [Clojure-specific smells](#clojure-specific-smells)
   * [Unnecessary macros](#unnecessary-macros)
-  * [Immutability violation](#lazy-side-effects)
+  * [Immutability violation](#immutability-violation)
   * [Namespaced keys neglect](#namespaced-keys-neglect)
   * [Improper emptiness check](#improper-emptiness-check)
   * [Accessing non-existent map fields](#accessing-non-existent-map-fiels)
