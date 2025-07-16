@@ -80,6 +80,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (format-log "ERROR" "File not found"))
 ```
 
+* Source: 
+
+* Key Insight: 
+
 ## Long Function
 
 * __Description:__ This code smell occurs when a function grows excessively large, containing too many lines of code or performing too many operations. Long functions are harder to understand, maintain, and test. In functional programming, this smell is analogous to the "Long Method" smell commonly discussed in object-oriented paradigms.
@@ -217,6 +221,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
       {:valid false :errors @errors}))) 
 ```
 
+* Source: 
+
+* Key Insight: 
+
 ## Long Parameter List
 
 * __Description:__ This code smell occurs when a function or method accepts an excessive number of parameters. Long parameter lists make functions harder to understand, more error-prone to call, and more difficult to refactor.
@@ -253,6 +261,15 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
                        :address "123 Main St" 
                        :phone "555-1234"}))
 ```
+
+* __Sources and Insights:__
+
+  -  **Source:** https://bsless.github.io/code-smells/ <br>
+    **Insight:** “Avoid An Explosion In Input Arguments”
+  
+  -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/ <br>
+    **Insight:** “Another pattern that I have seen, and this was specific to Clojure, is functions which take a lot of parameters, maybe ten or more.”
+
 
 ## Divergent Change
 
@@ -296,6 +313,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 (println (process-user {:first-name "Alice" :last-name "Smith" :age 22}))
 ```
+
+* __Sources and Insights:__
+
+  -  **Source:** https://codesai.com/posts/2016/10/refactoring-tests-using-builder-functions-in-clojure-clojurescript <br>
+    **Insight:** “Nearly any change in the representation of those data will have a big impact on the tests code”
 
 ## Shotgun Surgery
 
@@ -354,6 +376,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (comment
   (create-user "Alice" "alice@example.com" 30))
 ```
+
+* __Sources and Insights:__
+
+  -  **Source:** https://codesai.com/posts/2016/10/refactoring-tests-using-builder-functions-in-clojure-clojurescript <br>
+    **Insight:** “Nearly any change in the representation of those data will have a big impact on the tests code”
 
 ## Primitive Obsession
 
@@ -486,6 +513,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (get-session session-store))
 ```
 
+* __Sources and Insights:__
+
+  -  **Source:** https://bsless.github.io/code-smells/ <br>
+    **Insight:** “To compose for a sequential use case we could have used transducers. Now we are tied to a sequential concretion”
+
 ## Comments
 
 * __Description:__ This code smell occurs when functions, modules, or data structures become overly dependent on each other's internal representations or behaviors. This tight coupling reduces modularity, complicates maintenance, and makes it harder to evolve or reason about the system independently.
@@ -549,6 +581,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (process-user {:id 1 :email "Exemplo@Email.com"})
 ```
 
+* __Sources and Insights:__
+
+  -  **Source:** https://pragtob.wordpress.com/2017/11/14/are-comments-a-code-smell-yes-no-it-depends/ <br>
+    **Insight:** “There is so much more that you can do to make your code more readable instead of resorting to a comment. Comments should be a last resort”.
+
 ## Mixed Paradigms
 
 * __Description:__ This code smell occurs when two or more distinct programming paradigms are used together in a way that forces interoperability. The blending of approaches — such as functional and imperative or object-oriented and procedural — can introduce confusion, reduce clarity, and complicate the design, as different paradigms impose conflicting constraints and expectations.
@@ -584,6 +621,14 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (increment-counter counter))
 (println (increment-counter counter))
 ```
+
+* __Sources and Insights:__
+
+  -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/?rdt=57161 <br>
+    **Insight:** “And a related antipattern is to write imperative style code in one big function”.
+  -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/?rdt=57161 <br>
+    **Insight:** “How to refactor a Java singleton to Clojure?<br> [...] <br>
+    So if you want to learn how to write good Clojure code, you'll have to learn how to avoid (most) mutable state at some point”.
 
 ## Library Locker
 
@@ -627,6 +672,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (send-data "test"))
 ```
 
+* __Sources and Insights:__
+
+  -  **Source:** https://thomascothran.tech/2023/08/library-locker/ <br>
+    **Insight:** “The “Library Locker” is a common anti-pattern for incorporating third party libraries into an application”
+
 # Functional-related Smells
 
 ## Overabstracted Composition
@@ -634,6 +684,15 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Description:__ This code smell occurs when excessive use of function composition (combining multiple functions into a single one) and partial application (fixing some arguments of a function to create a new one) makes the code overly abstract, sacrificing readability and maintainability. While function composition is a powerful tool in functional programming, overusing it can lead to deeply nested expressions that obscure the data flow.
 
 * __Example:__
+
+```clojure
+;; From source
+(def m
+  {:one {:two {:three 3 :four 4 :five 5}}})
+  (->> ((comp :two :one) m)
+     ((juxt :three :five)))
+```
+
 ``` clojure
 (defn get-user [data] (:user data))
 (defn get-email [user] (:email user))
@@ -675,6 +734,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 )
 ```
 
+* __Sources and Insights:__
+
+   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+    **Insight:** “Overabundance of partial application and composition”
 
 ## Overuse Of High-Order Functions
 
@@ -705,11 +768,21 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (process-data [1 2 3 4])) 
 ```
 
+* __Sources and Insights:__
+
+   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+    **Insight:** “Designing everything as higher order functions”
+
 ## Trivial Lambda
 
 * __Description:__ This code smell occurs when anonymous functions (lambdas) are excessively used instead of named functions, reducing code clarity and reusability. This is especially problematic when lambda expressions are chained or become overly complex, making the code harder to read, understand, and maintain.
 
 * __Example:__ 
+
+```clojure
+;; From source
+(map #(f %) xs)
+```
 
 ``` clojure
 (defn square [x]
@@ -722,6 +795,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 * __Refactoring:__ The anonymous function #(square %) does nothing more than calling square directly. This is redundant. Pass the function by name instead.
 
+```clojure
+;; From source
+(map f xs)
+```
+
 ``` clojure
 (defn square [x]
   (* x x))
@@ -730,6 +808,13 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 (println (map square numbers))
 ```
+
+* __Sources and Insights:__
+
+   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+    **Insight:** “Anonymous functions for everything”
+  -  **Source:** https://bsless.github.io/code-smells/<br>
+  **Insight:** “Trivial Lambda”
 
 ## Deeply-nested Call Stacks
 
@@ -777,11 +862,31 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (map process-user users))
 ```
 
+* __Sources and Insights:__
+
+   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+    **Insight:** “Each nested function call is a jump in context which makes it difficult for a reader to track, and it limits available information in the scope so it's generally less flexible.”
+
 ## Inappropriate Collection
 
 * __Description:__ This code smell occurs when a data structure is used in a way that contradicts its intended purpose, leading to inefficient operations. For example, if a sequential collection is frequently scanned to locate elements by key, it likely indicates that an associative structure (e.g., a map or dictionary) would be more appropriate, improving both performance and clarity.
 
 * __Example:__
+
+```clojure
+;; From source
+(def people
+  [{:person/name "Fred"}
+   {:person/name "Ethel"}
+   {:person/name "Lucy"}])
+
+(defn person-in-people?
+  [person people]
+  (some #(= person (:person/name %)) people))
+
+(person-in-people? "Fred" people);; => true
+(person-in-people? "Bob" people) ;; => nil
+```
 
 ``` clojure
 (ns examples.smells.inappropriate-collection)
@@ -801,6 +906,24 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 * __Refactoring:__ Scanning a sequential collection to find an item by a key is inefficient and obscures intent. Use an associative structure like group-by to enable fast, direct access.
 
+```clojure
+;; From source
+
+;; With group-by:
+(def collected-people
+  (group-by :person/name people))
+
+(contains? collected-people "Fred");; => true
+(contains? collected-people "Bob") ;; => false
+
+;; With clojure.set/index
+(def collected-people
+  (clojure.set/index people [:person/name]))
+
+(contains? collected-people {:person/name "Fred"});; => true
+(contains? collected-people {:person/name "Bob"}) ;; => false
+```
+
 ``` clojure
 (def people
   [{:person/name "Fred"}
@@ -814,6 +937,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (contains? collected-people "Alice"))
 ```
 
+* __Sources and Insights:__
+
+   -  **Source:** https://bsless.github.io/code-smells/<br>
+    **Insight:** “If you find yourself scanning collections of maps looking for a map where a certain key has a certain value, your collection might be telling you it wants to be associative, not sequential”
 
 ## Premature Optimization
 
@@ -859,6 +986,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   #(get-file-from-network "/path/to/file.txt"))
 ```
 
+* __Sources and Insights:__
+
+   -  **Source:** https://grishaev.me/en/clojure-with-retry/<br>
+    **Insight:** “There might be dozens of reasons when your request fails, and there is no way to recover. Instead of invoking a resource again and again, you must investigate what went wrong”.
+
 ## Lazy Side Effects
 
 * __Description:__ This code smell occurs when side effects (such as state changes or external interactions) happen within lazy evaluated code. Since lazy evaluation delays computation until needed, these side effects may not execute as expected, leading to unpredictable behavior and making the code harder to debug and maintain. 
@@ -897,6 +1029,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 ;; Notifying value: 1
 ;; Notifying value: 2
 ```
+
+* __Sources and Insights:__
+
+   -  **Source:** https://dawranliou.com/blog/default-transducers/<br>
+    **Insight:** “There might be dozens of reasons when your request fails, and there is no way to recover. Instead of invoking a resource again and again, you must investigate what went wrong”
 
 ## External Data Coupling
 
@@ -1009,6 +1146,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (greet-users! users))
 ```
 
+* __Sources and Insights:__
+
+   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+    **Insight:** “Make your side-effects obvious”
 
 ## Explicit Recursion
 
@@ -1033,12 +1174,22 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (double-nums [1 2 3 4])
 ```
 
+* __Sources and Insights:__
+
+   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+    **Insight:** “Using explicit recursion tends to be a code smell, there's a good chance that there's a higher order function that can do the job”
 
 ## Reinventing the Wheel
 
 * __Description:__ This code smell occurs when developers reimplement functionality that is already provided by the language’s standard, idiomatic constructs—particularly in the context of sequence processing. Instead of using expressive built-in functions like `map`, `mapcat`, `filter`, `remove`, `keep`, `second`, or `ffirst`, code may rely on verbose anonymous functions, deeply nested calls, or manual iteration patterns. These reinventions not only obscure the original intent of the code but also introduce unnecessary complexity, reduce readability, and increase the potential for subtle bugs.
 
 * __Example:__
+
+```clojure
+;; From source
+(apply concat (map f xs))
+```
+
 ```clojure
 (defn process-data [data]
   (let [filtered (filter (fn [x] (not (nil? (get x :active)))) data)
@@ -1058,6 +1209,11 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Refactoring:__ Replace custom anonymous functions and manual logic with Clojure’s built-in sequence functions such as `map`, `mapcat`, `filter`, `second`, or keyword-as-function idioms. These idioms express intent more clearly, reduce verbosity, and produce safer, more maintainable code.
 
 ```clojure
+;; From source
+(mapcat f xs)
+```
+
+```clojure
 (defn process-data [data]
   (let [filtered (filter :active data)
         names (map :name filtered)
@@ -1073,6 +1229,13 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   {:name "Carol" :active true  :tags ["editor" "reviewer"]}])
 ```
 
+* __Sources and Insights:__
+
+    -  **Source:** https://bsless.github.io/code-smells/<br>
+    **Insight:** “Sometimes you need to concat the results of mapping. Using mapcat is an idiomatic option for this case.”
+
+   -  **Source:** https://itsrainingmani.dev/blog/smelly-code/<br>
+    **Insight:** “I ended up using the (apply concat (map f xs)) construct to solve quite a few problems when an idiomatic option would have been to simply use the mapcat function.”
 
 ## Positional Return Values
 
@@ -1097,6 +1260,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (:true (sieve even? (range 9)))
 ```
 
+* __Sources and Insights:__
+
+    -  **Source:** https://bsless.github.io/code-smells/<br>
+    **Insight:** “Using positional return values encodes meaning to indices, giving semantic or business meaning to indices/ordering. It's better to encode that meaning as explicit keywords”
 
 # Clojure-specific Smells
 
@@ -1125,6 +1292,8 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (println "This runs because test is false"))
 ```
 
+-  **Source:** https://news.ycombinator.com/item?id=34052268<br>
+    **Insight:** “Using macros when regular functions would do is a good example of that. It is absolutely possible to write impenetrable Clojure if you start doing weird things just because you can.”
 
 ## Immutability Violation
 
@@ -1152,6 +1321,8 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (println countries))
 ```
 
+-  **Source:** https://softwareengineering.stackexchange.com/questions/219780/how-to-refactor-a-java-singleton-to-clojure<br>
+    **Insight:** “Mutable state totally destroys this concept, and with it, the advantages of pure code. Clojure doesn't force you to be pure, but it certainly makes it easy to do so”
 
 ## Namespaced Keys Neglect
 
@@ -1175,6 +1346,9 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (:user/id user))    ;; 1
 (println (:order/id order))  ;; 101
 ```
+
+-  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+    **Insight:** “Namespaced keywords are good. Use them.”
 
 ## Improper Emptiness Check
 
@@ -1212,6 +1386,9 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
  (process-if-empty [])
  (process-if-empty [1])]
 ```
+
+-  **Source:** https://bsless.github.io/code-smells/<br>
+    **Insight:** “Don't use (not (empty? x))!”
 
 
 ## Accessing non-existent Map Fiels
