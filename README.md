@@ -9,673 +9,495 @@ The identified smells were organized in this repository, each with a description
 This catalog reflects the current stage of our ongoing study. We plan to expand it in future phases, following the model of the Elixir work. Contributions are welcome via issues and pull requests.
 
 # Table of Smells
-* [Traditional smells](#traditional-smells)
-  * [Duplicated code](#duplicated-code)
-  * [Long function](#long-function)
-  * [Long parameter list](#long-parameter-list)
-  * [Divergent change](#divergent-change)
-  * [Shotgun surgery](#shotgun-surgery)
-  * [Primitive obsession](#primitive-obsession)
-  * [Message chains](#message-chains)
-  * [Middle man](#middle-man)
-  * [Inappropriate intimacy](#inappropriate-intimacy)
-  * [Comments](#comments)
-  * [Mixed paradigms](#mixed-paradigms)
-  * [Library locker](#library-locker)
-* [Functional-related smells](#functional-related-smells)
-  * [Overabstracted composition](#overabstracted-composition)
-  * [Overuse of high-order functions](#overuse-of-high-order-functions)
-  * [Trivial lambda](#trivial-lambda)
-  * [Deeply-nested call stacks](#deeply-nested-call-stacks)
-  * [Inappropriate collection](#inappropriate-collection)
-  * [Premature optimization](#premature-optimization)
-  * [Lazy side effects](#lazy-side-effects)
-  * [External data coupling](#external-data-coupling)
-  * [Inefficient filtering](#inefficient-filtering)
-  * [Hidden side effects](#hidden-side-effects)
-  * [Explicit recursion](#explicit-recursion)
-  * [Reinventing the wheel](#reinventing-the-wheel)
-  * [Positional return values](#positional-return-values)
-* [Clojure-specific smells](#clojure-specific-smells)
-  * [Unnecessary macros](#unnecessary-macros)
-  * [Immutability violation](#lazy-side-effects)
-  * [Namespaced keys neglect](#namespaced-keys-neglect)
-  * [Improper emptiness check](#improper-emptiness-check)
-  * [Accessing non-existent map fields](#accessing-non-existent-map-fiels)
-  * [Unnecessary `into`](#unnecessary-into)
-  * [Conditional build-up](#conditional-build-up)
-  * [Verbose checks](#verbose-checks)
-  * [Production `doall`](#production-doall)
-  * [Redundant `do` block](#redundant-do-block)
-  * [Thread ignorance](#thread-ignorance)
-  * [Nested forms](#nested-forms)
-  * [Direct use of `clojure.lang.RT`](#direct-usage-of-clojurelangrt)
+<!-- no toc -->
+- [Clojure-specific Smells](#clojure-specific-smells)
+  - [Unnecessary Macros](#unnecessary-macros)
+  - [Immutability Violation](#immutability-violation)
+  - [Namespaced Keys Neglect](#namespaced-keys-neglect)
+  - [Improper Emptiness Check](#improper-emptiness-check)
+  - [Accessing non-existent Map Fiels](#accessing-non-existent-map-fiels)
+  - [Unnecessary `into`](#unnecessary-into)
+  - [Conditional Build-Up](#conditional-build-up)
+  - [Verbose Checks](#verbose-checks)
+  - [Production `doall`](#production-doall)
+  - [Redundant `do` block](#redundant-do-block)
+  - [Thread Ignorance](#thread-ignorance)
+  - [Nested Forms](#nested-forms)
+  - [Direct usage of `clojure.lang.RT`](#direct-usage-of-clojurelangrt)
+- [Functional-related Smells](#functional-related-smells)
+  - [Overabstracted Composition](#overabstracted-composition)
+  - [Overuse Of High-Order Functions](#overuse-of-high-order-functions)
+  - [Trivial Lambda](#trivial-lambda)
+  - [Deeply-nested Call Stacks](#deeply-nested-call-stacks)
+  - [Inappropriate Collection](#inappropriate-collection)
+  - [Premature Optimization](#premature-optimization)
+  - [Lazy Side Effects](#lazy-side-effects)
+  - [External Data Coupling](#external-data-coupling)
+  - [Inefficient Filtering](#inefficient-filtering)
+  - [Hidden Side Effects](#hidden-side-effects)
+  - [Explicit Recursion](#explicit-recursion)
+  - [Reinventing the Wheel](#reinventing-the-wheel)
+  - [Positional Return Values](#positional-return-values)
 
-# Traditional Smells
+# Clojure-specific Smells
 
-## Duplicated Code
+## Unnecessary Macros
 
-* __Description:__ This smell occurs when identical or highly similar code appears in multiple locations within a codebase. It increases maintenance costs and the risk of inconsistencies, as a single change must be manually replicated across all instances. 
+* __Description:__ This code smell occurs when macros are used in situations where simpler, more conventional solutions—such as functions or existing language constructs—would suffice. While macros offer powerful metaprogramming capabilities, their overuse introduces unnecessary abstraction and complexity. This can obscure the code’s intent, make debugging more challenging and reducing maintainability.
+
+* __Example:__
+```clojure
+(defmacro unless [test & body]
+  `(if (not ~test)
+     (do ~@body)))
+
+(unless false
+  (println "This runs because test is false"))
+```
+
+* __Refactoring:__ Avoid macros when a simple function or existing language construct achieves the same goal. Replace macros with functions that clearly express the intent and minimize metaprogramming complexity. Use them only when necessary to extend language syntax or perform compile-time transformations that cannot be done with functions.
+
+```clojure
+(defn unless-fn [test & body]
+  (when (not test)
+    (doseq [expr body] expr)))
+
+(unless-fn false
+  (println "This runs because test is false"))
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Forum - Structuring Clojure applications](https://news.ycombinator.com/item?id=34052268)<br>
+      **Excerpt:** “Using macros when regular functions would do is a good example of that. It is absolutely possible to write impenetrable Clojure if you start doing weird things just because you can.”
+
+## Immutability Violation
+
+* __Description:__ This code smell Immutability occurs when mutable state is used in a language or paradigm that emphasizes immutability (such as Clojure), leading to side effects, reduced predictability, and harder-to-maintain code.
 
 * __Example:__
 
-```clojure
-(defn info-log [message]
-  (str "[INFO] " (clojure.string/upper-case message) " - " (java.time.Instant/now)))
+``` clojure
+;; Example from source
+(def countries (do-get-countries))
 
-(defn error-log [message]
-  (str "[ERROR] " (clojure.string/upper-case message) " - " (java.time.Instant/now)))
+(defn update-country [country]
+  (def countries (assoc countries (:name country) country)))
 
-(println (info-log "Process started"))
-(println (error-log "File not found"))
+(update-country {:name "Brazil" :pop 210})
 ```
 
-* __Refactoring:__ When multiple functions perform nearly identical operations with only slight variations (like a fixed log level), it's better to unify the shared logic into a single, parameterized function. This reduces repetition, improves clarity, and makes future changes easier to implement.
+* __Refactoring:__ Avoid redefining vars inside functions. Make your updater return a new value so state stays immutable.
 
-```clojure
-(defn format-log [level message]
-  (str "[" level "] " (.toUpperCase message) " - " (java.time.Instant/now)))
+``` clojure
+(defn update-country [countries country]
+  (assoc countries (:name country) country))
 
-(println (format-log "INFO" "Process started"))
-(println (format-log "ERROR" "File not found"))
+(let [countries (update-country {} {:name "Brazil" :pop 210})]
+  (println countries))
 ```
 
-* Source: 
+* __Sources and Excerpts:__
 
-* Key Insight: 
+  -  **Source:** [Forum - How to refactor a Java singleton to Clojure?](https://softwareengineering.stackexchange.com/questions/219780/how-to-refactor-a-java-singleton-to-clojure)<br>
+      **Excerpt:** “Mutable state totally destroys this concept, and with it, the advantages of pure code. Clojure doesn't force you to be pure, but it certainly makes it easy to do so”
 
-## Long Function
+## Namespaced Keys Neglect
 
-* __Description:__ This code smell occurs when a function grows excessively large, containing too many lines of code or performing too many operations. Long functions are harder to understand, maintain, and test. In functional programming, this smell is analogous to the "Long Method" smell commonly discussed in object-oriented paradigms.
+* __Description:__ This code smell occurs when developers rely on unqualified keywords (e.g., `:id`, `:name`) instead of using namespaced keywords (e.g., `:user/id`, `:order/name`). While seemingly harmless, this practice leads to ambiguity, increased risk of key collisions, and reduced semantic clarity — particularly in large or modular systems.
 
 * __Example:__
-
 ```clojure
-(defn validate-user
-  [user]
-  (let [errors (atom [])]
+(def user {:id 1 :name "Alice"})
+(def order {:id 101 :name "Order-101"})
 
-    (if (string? (:name user))
-      (do
-        (when (< (count (:name user)) 2)
-          (swap! errors conj "Name is too short."))
-        (when (> (count (:name user)) 100)
-          (swap! errors conj "Name is too long."))
-        (when (str/blank? (:name user))
-          (swap! errors conj "Name cannot be blank."))
-        (when (re-find #"\d" (:name user))
-          (swap! errors conj "Name must not contain numbers.")))
-      (swap! errors conj "Invalid name."))
-
-    (let [email (:email user)]
-      (if (string? email)
-        (do
-          (if (not (re-matches #".+@.+\..+" email))
-            (swap! errors conj "Invalid email format."))
-          (if (or (str/includes? email "spam")
-                  (str/includes? email "fake"))
-            (swap! errors conj "Email contains suspicious terms."))
-          (when (str/ends-with? email ".xyz")
-            (swap! errors conj "Emails ending in .xyz are not allowed.")))
-        (swap! errors conj "Email must be a string.")))
-
-    (let [pwd (:password user)]
-      (if (string? pwd)
-        (do
-          (when (not-any? #(Character/isUpperCase %) pwd)
-            (swap! errors conj "Password must contain an uppercase letter."))
-          (when (not-any? #(Character/isDigit %) pwd)
-            (swap! errors conj "Password must contain a number."))
-          (when (not-any? #(contains? #{\! \@ \# \$ \% \&} %) pwd)
-            (swap! errors conj "Password must contain a special character."))
-          (when (str/includes? pwd " ")
-            (swap! errors conj "Password must not contain spaces.")))
-        (swap! errors conj "Invalid password.")))
-
-    (let [age (:age user)]
-      (cond
-        (nil? age) (swap! errors conj "Age is required.")
-        (not (number? age)) (swap! errors conj "Age must be a number.")
-        (> age 120) (swap! errors conj "Invalid age.")))
-
-    (let [prefs (:preferences user)]
-      (if (sequential? prefs)
-        (do
-          (when (empty? prefs)
-            (swap! errors conj "Preferences list is empty."))
-          (when (> (count prefs) 20)
-            (swap! errors conj "Too many preferences.")))
-        (swap! errors conj "Preferences must be a list.")))
-
-    (if (empty? @errors)
-      {:valid true}
-      {:valid false :errors @errors}))) 
+(println (:id user))    ;; 1
+(println (:id order))   ;; 101
 ```
 
-* __Refactoring:__ Long function make the code harder to understand and reuse. By breaking them into smaller, well-named functions, we improve modularity and maintainability.
+* __Refactoring:__ Always use namespaced keywords to clearly distinguish data domains and reduce ambiguity. This practice prevents key collisions in complex systems, improves code readability by providing explicit context, and makes it easier to reason about and maintain data structures across different modules or libraries.
 
 ```clojure
-(defn validate-name [name errors]
-  (if (string? name)
-    (do
-      (when (< (count name) 2)
-        (swap! errors conj "Name is too short."))
-      (when (> (count name) 100)
-        (swap! errors conj "Name is too long."))
-      (when (str/blank? name)
-        (swap! errors conj "Name cannot be blank."))
-      (when (re-find #"\d" name)
-        (swap! errors conj "Name must not contain numbers.")))
-    (swap! errors conj "Invalid name.")))
+(def user {:user/id 1 :user/name "Alice"})
+(def order {:order/id 101 :order/name "Order-101"})
 
-(defn validate-email [email errors]
-  (if (string? email)
-    (do
-      (when (not (re-matches #".+@.+\..+" email))
-        (swap! errors conj "Invalid email format."))
-      (when (or (str/includes? email "spam")
-                (str/includes? email "fake"))
-        (swap! errors conj "Email contains suspicious terms."))
-      (when (str/ends-with? email ".xyz")
-        (swap! errors conj "Emails ending in .xyz are not allowed.")))
-    (swap! errors conj "Email must be a string.")))
+(println (:user/id user))    ;; 1
+(println (:order/id order))  ;; 101
+```
 
-(defn validate-password [pwd errors]
-  (if (string? pwd)
-    (do
-      (when (not-any? #(Character/isUpperCase %) pwd)
-        (swap! errors conj "Password must contain an uppercase letter."))
-      (when (not-any? #(Character/isDigit %) pwd)
-        (swap! errors conj "Password must contain a number."))
-      (when (not-any? #(contains? #{\! \@ \# \$ \% \&} %) pwd)
-        (swap! errors conj "Password must contain a special character."))
-      (when (str/includes? pwd " ")
-        (swap! errors conj "Password must not contain spaces.")))
-    (swap! errors conj "Invalid password.")))
+* __Sources and Excerpts:__
 
-(defn validate-age [age errors]
+  -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
+      **Excerpt:** “Namespaced keywords are good. Use them.”
+
+## Improper Emptiness Check
+
+* __Description:__ This code smell occurs when developers use verbose or less idiomatic constructs—such as (`not (empty? x)`)—to determine whether a collection is non-empty, instead of leveraging the more concise and expressive idiom (`seq x`). In Clojure, the concept of emptiness is nuanced: `nil` is considered empty, sequences can be infinite or lazy, and realization may matter. Using `seq` not only simplifies the check but also aligns with Clojure’s idiomatic style, improving readability and avoiding redundant negation or abstraction layers.
+
+* __Example:__
+```clojure
+(defn process-if-not-empty [coll]
+  (when (not (empty? coll))
+    (str "Processing: " coll)))
+
+(defn process-if-empty [coll]
+  (when (= 0 (count coll))
+    "Empty collection detected"))
+
+[(process-if-not-empty [])
+ (process-if-not-empty [1 2])
+ (process-if-empty [])
+ (process-if-empty [1])]
+```
+
+* __Refactoring:__ Avoid verbose or redundant checks like `(not (empty? x))` and `(= 0 (count x))`. Instead, use `(seq x)` to test for non-emptiness and `(empty? x)` to test for emptiness. These forms are shorter, idiomatic, and clearer in expressing intent, while also avoiding unnecessary collection realization and reducing potential confusion with nil handling.
+
+```clojure
+(defn process-if-not-empty [coll]
+  (when (seq coll)
+    (str "Processing: " coll)))
+
+(defn process-if-empty [coll]
+  (when (empty? coll)
+    "Empty collection detected"))
+
+[(process-if-not-empty [])
+ (process-if-not-empty [1 2])
+ (process-if-empty [])
+ (process-if-empty [1])]
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “Don't use (not (empty? x))!”
+
+
+## Accessing non-existent Map Fiels
+
+* __Description:__ This code smell occurs when code accesses map keys that may not exist, relying on nil as a default return without explicit handling. In Clojure, (`get m :key`) returns `nil` both when the key is missing and when it is explicitly associated with `nil`, which can obscure intent and lead to subtle bugs. Since Clojure maps treat `nil` as both a value and a signal of absence, the distinction between "missing" and "present but empty" becomes ambiguous.
+
+* __Example:__
+```clojure
+(defn welcome-message [user]
+  (str "Welcome, " (:name user)))
+
+(welcome-message {:id 42})
+(welcome-message {:id 43 :name nil})
+```
+
+* __Refactoring:__ To eliminate this smell, first try to avoid inserting `nil` values into maps when you have control over their construction—using utilities like `assoc-some` or `prune-nils` can help. When reading from a map, avoid assuming `nil` means absence. Instead, use (`contains? m :key`) to test key presence explicitly. This clarifies intent and prevents subtle bugs caused by missing fields or keys deliberately set to nil.
+
+```clojure
+(defn welcome-message [user]
+  (if (contains? user :name)
+    (str "Welcome, " (:name user))
+    "Name not provided"))
+
+[(welcome-message {:id 42})
+ (welcome-message {:id 44 :name "Alice"})]
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “Clojure maps are collections, not slots. Combined with nil's meaning being "nothing", nil values inside maps are confusing. [...] Try to avoid inserting nil values into a map.”
+
+
+## Unnecessary `into`
+
+* __Description:__ This code smell occurs when the `into` function is used in situations where more concise or idiomatic alternatives exist, leading to unnecessarily verbose or inefficient code. While into is useful for combining collections, it is often misused for simple type transformations—such as (`into [] coll`) instead of `vec`.
+
+* __Example:__
+```clojure
+(def users [{:id 1 :active true} {:id 2 :active false} {:id 3 :active true}])
+
+(defn active-ids [users]
+  (into [] (map :id (filter :active users))))
+
+(defn id-set [users]
+  (into #{} (map :id users)))
+
+(defn rename-keys [m]
+  (into {} (map (fn [[k v]] [(keyword (str "new-" (name k))) v]) m)))
+
+(comment
+  (active-ids users) ;; => [1 3]
+  (id-set users)     ;; => #{1 2 3}
+  (rename-keys {:a 1 :b 2}) ;; => {:new-a 1, :new-b 2}
+)
+```
+
+* __Refactoring:__ To eliminate this smell, replace uses of `into []` with `vec`, and `into #{}` with `set`, for clarity and intent. When transforming maps, prefer `reduce-kv` to avoid the extra indirection of (`into {} (map ...)`). These alternatives reduce verbosity, improve performance, and align with idiomatic Clojure practices.
+
+```clojure
+(def users [{:id 1 :active true} {:id 2 :active false} {:id 3 :active true}])
+
+(defn active-ids [users]
+  (vec (map :id (filter :active users))))
+
+(defn id-set [users]
+  (set (map :id users)))
+
+(defn rename-keys [m]
+  (reduce-kv (fn [acc k v] (assoc acc (keyword (str "new-" (name k))) v)) {} m))
+
+(comment
+  (active-ids users) ;; => [1 3]
+  (id-set users)     ;; => #{1 2 3}
+  (rename-keys {:a 1 :b 2}) ;; => {:new-a 1, :new-b 2}
+)
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “`into` is a pretty useful function, but one often abused. The (mis)usage of into can usually be broken to three distinct cases: Type Transformation, Map Mapping and Not Using the Transducer API.”
+
+
+## Conditional Build-Up
+
+* __Description:__ This code smell occurs when a state is incrementally constructed through a series of `let`, `if`, and `assoc` expressions, leading to verbose and imperative-style code. Rather than clearly expressing the transformation logic, this pattern scatters conditional state mutations across multiple branches, making it harder to reason about the overall flow.
+
+* __Example:__
+```clojure
+(defn f0 [in] (* in 10))
+(defn f1 [in] (+ in 1))
+(defn f2 [in] (- in 1))
+(defn p1 [in] (pos? in))
+(defn p2 [in] (even? in))
+
+(defn foo [in]
+  (let [m {:k0 (f0 in)}
+        m (if (p1 in) (assoc m :k1 (f1 in)) m)
+        m (if (p2 in) (assoc m :k2 (f2 in)) m)]
+    m))
+
+(foo 2)
+```
+
+* __Refactoring:__ Replace imperative-style stepwise construction (via repeated  `let`/`if`/`assoc`) with `cond->`, which cleanly threads conditional transformations. This improves clarity by co-locating conditions with the associated changes, avoids repetitive rebinding, and communicates intent more directly.
+
+```clojure
+(defn f0 [in] (* in 10))
+(defn f1 [in] (+ in 1))
+(defn f2 [in] (- in 1))
+(defn p1 [in] (pos? in))
+(defn p2 [in] (even? in))
+
+(defn foo
+  [in]
+  (cond-> {:k0 (f0 in)}
+    (p1 in) (assoc :k1 (f1 in))
+    (p2 in) (assoc :k2 (f2 in))))
+
+(foo 2)
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “Conditional Build-Up”
+
+
+## Verbose Checks
+
+* __Description:__ This code smell arises when developers manually implement common checks (such as checking if a number is zero, positive, or negative), when Clojure already provides clear, idiomatic functions that do the same. This results in verbose and less readable code, and misses an opportunity to leverage Clojure's built-in abstractions for clarity.
+
+* __Example:__
+```clojure
+(defn number-type [n]
   (cond
-    (nil? age) (swap! errors conj "Age is required.")
-    (not (number? age)) (swap! errors conj "Age must be a number.")
-    (> age 120) (swap! errors conj "Invalid age.")))
+    (= n 0) :zero
+    (< 0 n) :positive
+    (> 0 n) :negative))
 
-(defn validate-preferences [prefs errors]
-  (if (sequential? prefs)
+(number-type 0)
+;; => :zero
+
+(number-type 5)
+;; => :positive
+
+(number-type -3)
+;; => :negative
+```
+
+* __Refactoring:__ Replace explicit numeric, boolean and nil comparisons like `(= n 0)`, `(< 0 n)`, `(> 0 n)`, `(= true x)`, `(= false x)` or `(= nil x)` with Clojure’s idiomatic predicates: `zero?`, `pos?`, `neg?`, `true?`, `false?` or `nil?`. These functions not only make the code more concise and expressive but also improve semantic clarity.
+
+```clojure
+(defn number-type [n]
+  (cond
+    (zero? n) :zero
+    (pos? n)  :positive
+    (neg? n)  :negative))
+
+(number-type 0)
+
+(number-type 5)
+
+(number-type -3)
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** Numbers! and Truth Be Told sections
+
+
+## Production `doall`
+
+* __Description:__ This code smell occurs when the `doall` function is used in production code to force realization of lazy sequences, often to trigger side effects or avoid deferred evaluation. While `doall` can be useful in REPL experimentation, its use in production undermines one of Clojure’s core strengths: laziness. For large or infinite sequences, this can lead to memory spikes and unpredictable performance. In production contexts, doall often signals poor abstraction choices and should prompt reconsideration of the control flow or evaluation strategy.
+
+* __Example:__
+```clojure
+(defn print-evens []
+  (doall (map #(println %) (filter even? (range 1000)))))
+
+(print-evens)
+```
+
+* __Refactoring:__ Replace `doall` with explicit constructs like `doseq`, `run!`, or `dorun` when your intent is to trigger side effects or consume a sequence. These constructs clearly communicate your purpose and avoid the accidental full realization of large or infinite sequences, which can cause memory issues or performance degradation. In most production scenarios, laziness should be preserved or explicitly managed through more idiomatic control structures.
+
+```clojure
+(defn print-evens []
+  (doseq [n (filter even? (range 1000))]
+    (println n)))
+
+(print-evens)
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “`doall` is a macro which forcefully realizes lazy sequences. It should not be used in production.”
+
+## Redundant `do` block
+
+* __Description:__ This code smell occurs when developers wrap expressions in an explicit (`do ...`) block inside constructs that already support implicit sequencing, such as `let`, `when`, `if`, `fn`, `try`, `loop`, and others. This redundant use of do adds no semantic value but introduces unnecessary syntax, making the code appear more complex and imperative than it actually is.
+
+* __Example:__
+```clojure
+(defn process-item [x]
+  (when (pos? x)
     (do
-      (when (empty? prefs)
-        (swap! errors conj "Preferences list is empty."))
-      (when (> (count prefs) 20)
-        (swap! errors conj "Too many preferences.")))
-    (swap! errors conj "Preferences must be a list.")))
+      (println "Processing:" x)
+      (* x 2))))
 
-(defn validate-user [user]
-  (let [errors (atom [])]
-    (validate-name (:name user) errors)
-    (validate-email (:email user) errors)
-    (validate-password (:password user) errors)
-    (validate-age (:age user) errors)
-    (validate-preferences (:preferences user) errors)
-
-    (if (empty? @errors)
-      {:valid true}
-      {:valid false :errors @errors}))) 
+(process-item 2)
 ```
 
-* Source: 
-
-* Key Insight: 
-
-## Long Parameter List
-
-* __Description:__ This code smell occurs when a function or method accepts an excessive number of parameters. Long parameter lists make functions harder to understand, more error-prone to call, and more difficult to refactor.
-
-* __Example:__
+* __Refactoring:__ Remove `do` blocks that are nested inside forms already capable of handling multiple expressions. These constructs perform implicit sequencing, so wrapping their bodies in a do block adds no functional value and increases syntactic noise.
 
 ```clojure
-(defn create-user [first-name last-name age email address phone]
-  {:first-name first-name
-   :last-name last-name
-   :age age
-   :email email
-   :address address
-   :phone phone})
+(defn process-item [x]
+  (when (pos? x)
+    (println "Processing:" x)
+    (* x 2)))
 
-(println (create-user "Alice" "Smith" 30 "alice@example.com" "123 Main St" "555-1234"))
+(process-item 2)
 ```
 
-* __Refactoring:__ A long parameter list can be simplified by grouping related data into a single map, making the function easier to use and extend.
+* __Sources and Excerpts:__
 
-```clojure
-(defn create-user [user-info]
-  {:first-name (:first-name user-info)
-   :last-name (:last-name user-info)
-   :age (:age user-info)
-   :email (:email user-info)
-   :address (:address user-info)
-   :phone (:phone user-info)})
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “Some expressions have implicit `do` blocks in them, making it unnecessary to use a `do` block.”
 
-(println (create-user {:first-name "Alice" 
-                       :last-name "Smith" 
-                       :age 30 
-                       :email "alice@example.com" 
-                       :address "123 Main St" 
-                       :phone "555-1234"}))
-```
+## Thread Ignorance
 
-* __Sources and Insights:__
-
-  -  **Source:** https://bsless.github.io/code-smells/ <br>
-    **Insight:** “Avoid An Explosion In Input Arguments”
-  
-  -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/ <br>
-    **Insight:** “Another pattern that I have seen, and this was specific to Clojure, is functions which take a lot of parameters, maybe ten or more.”
-
-
-## Divergent Change
-
-* __Description:__ This code smell occurs when a single module or function must be modified in multiple, unrelated ways for different reasons. It indicates poor separation of concerns and suggests that the code is handling responsibilities that should be split across different components.
-
-* __Example:__ 
-
-```clojure
-(defn process-user [user]
-  (let [full-name (str (:first-name user) " " (:last-name user))
-        valid-age? (>= (:age user) 18)]
-    (if valid-age?
-      (do
-        (println (str "User " full-name " is valid. Sending notification..."))
-        {:full-name full-name :status "Valid"})
-      (do
-        (println (str "User " full-name " is not valid. No notification sent."))
-        {:full-name full-name :status "Invalid"}))))
-
-(println (process-user {:first-name "Alice" :last-name "Smith" :age 22}))
-```
-
-* __Refactoring:__ To reduce Divergent Change, we separate concerns into different functions. Now, formatting, validation, and notifications are handled independently, making modifications safer and more maintainable.
-
-```clojure
-(defn format-name [user]
-  (str (:first-name user) " " (:last-name user)))
-
-(defn valid-age? [user]
-  (>= (:age user) 18))
-
-(defn send-notification [user]
-  (println (str "User " (:full-name user) " is valid. Sending notification...")))
-
-(defn process-user [user]
-  (let [full-name (format-name user)
-        user-data {:full-name full-name :status (if (valid-age? user) "Valid" "Invalid")}]
-    (when (= "Valid" (:status user-data))
-      (send-notification user-data))
-    user-data))
-
-(println (process-user {:first-name "Alice" :last-name "Smith" :age 22}))
-```
-
-* __Sources and Insights:__
-
-  -  **Source:** https://codesai.com/posts/2016/10/refactoring-tests-using-builder-functions-in-clojure-clojurescript <br>
-    **Insight:** “Nearly any change in the representation of those data will have a big impact on the tests code”
-
-## Shotgun Surgery
-
-* __Description:__ This code smell occurs when a single type of change requires numerous small edits across many different modules, functions, or files. When modifications are spread throughout the codebase, it becomes difficult to identify all the affected areas, increasing the risk of introducing inconsistencies or missing critical updates.
-
-* __Example:__ 
-``` clojure
-(defn save-user [user]
-  (println "Saving to DB:" (:name user) (:email user) (:age user)))
-
-(defn send-welcome-email [user]
-  (println "Sending email to:" (:email user)))
-
-(defn track-user [user]
-  (println "Tracking new user:" (:name user) (:age user)))
-
-(defn create-user [name email age]
-  (let [user {:name name
-              :email email
-              :age age}]
-    (save-user user)
-    (send-welcome-email user)
-    (track-user user)))
-    
-(comment
-  (create-user "Alice" "alice@example.com" 30))
-```
-
-* __Refactoring:__ To refactor the smell, centralize the logic or data structure that is being repeatedly modified across the codebase. Encapsulate related operations—like construction, access, or transformation—into a single module or set of functions. Update all scattered usages to rely on this central abstraction.
-
-``` clojure
-(defn make-user [{:keys [name email age]}]
-  {:name name
-   :email email
-   :age age})
-
-(defn get-name [user] (:name user))
-(defn get-email [user] (:email user))
-(defn get-age [user] (:age user))
-
-(defn save-user [user]
-  (println "Saving to DB:" (get-name user) (get-email user) (get-age user)))
-
-(defn send-welcome-email [user]
-  (println "Sending email to:" (get-email user)))
-
-(defn track-user [user]
-  (println "Tracking new user:" (get-name user) (get-age user)))
-
-(defn create-user [name email age]
-  (let [user (make-user {:name name :email email :age age})]
-    (save-user user)
-    (send-welcome-email user)
-    (track-user user)))
-    
-(comment
-  (create-user "Alice" "alice@example.com" 30))
-```
-
-* __Sources and Insights:__
-
-  -  **Source:** https://codesai.com/posts/2016/10/refactoring-tests-using-builder-functions-in-clojure-clojurescript <br>
-    **Insight:** “Nearly any change in the representation of those data will have a big impact on the tests code”
-
-## Primitive Obsession
-
-* __Description:__ This code smell occurs when the code relies too much on primitive types (such as integers, strings, or collections)  to represent an object in a domain, rather than defining richer, explicit types. Primitive obsession leads to weak domain modeling, reduces code readability, and makes validation and maintenance harder.
+* __Description:__ This code smell occurs when developers avoid or misuse Clojure’s threading macros (`->`, `->>`, `some->`, `cond->`) in scenarios where they would provide clearer, more idiomatic data flow. Instead of leveraging threading to express stepwise transformations, code may fall back to repetitive bindings, deeply nested `let` or `when-let` forms, or manually sequenced function calls. This results in verbose, harder-to-follow logic and obscures the intent behind each transformation.
 
 * __Example:__
+```clojure
+(defn transform [xs]
+  (let [step1 (map inc xs)
+        step2 (filter even? step1)
+        step3 (reduce + step2)]
+    step3))
 
-``` clojure
-(defn format-price [amount currency]
-  (format "%.2f %s" amount currency))
-
-(println (format-price 9.99 "USD"))
+(transform [1 2 3 4])
 ```
 
-* __Refactoring:__ Passing raw primitives scatters formatting and rules; wrap amount and currency in a Money record. 
+* __Refactoring:__ Favor Clojure's threading macros when performing stepwise transformations on data. These macros eliminate unnecessary intermediate bindings and reduce nesting, making the data flow explicit and linear.
 
-``` clojure
-(defrecord Money [amount currency])
+```clojure
+(defn transform [xs]
+  (->> xs
+       (map inc)
+       (filter even?)
+       (reduce +)))
 
-(defn format-price [^Money m]
-  (format "%.2f %s" (:amount m) (:currency m)))
-
-(println (format-price (->Money 9.99 "USD")))
+(transform [1 2 3 4])
 ```
 
-## Message Chains
+* __Sources and Excerpts:__
 
-* __Description:__ This code smell occurs when you chain method calls on top of other method calls, creating a long, fragile chain of calls. Each object in the chain exposes part of its internal structure to the caller, increasing coupling and making the code harder to read, maintain, and refactor. Changes to intermediate objects often require modifications throughout the chain, leading to brittle designs.
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “Avoid trivial threading [...] And remember to thread with style.”
+
+
+## Nested Forms
+
+* __Description:__ This code smell occurs when multiple binding or iteration forms—such as `let`, `when-let`, `if-let`, or `doseq`—are unnecessarily nested instead of being combined in a single, flat form. While technically valid, this nesting introduces extra indentation and structural complexity without adding semantic value. It obscures the relationships between bindings, increases visual noise, and makes the code harder to read and reason about.
 
 * __Example:__
+```clojure
+(defn process [user]
+  (let [profile (:profile user)]
+    (when profile
+      (let [address (:address profile)]
+        (when address
+          (let [city (:city address)]
+            (str "City: " city)))))))
 
-``` clojure
-(def user
-  {:profile {:contact {:email "user@example.com"}}})
-
-(defn get-user-email [user]
-  (-> user :profile :contact :email))
-
-(println (get-user-email user))
+(process {:profile {:address {:city "Recife"}}})
 ```
 
-* __Refactoring:__ Avoid chaining multiple calls to access deeply nested data structures. Instead, extract intermediate lookups into separate helper functions. This reduces coupling to internal representations, improves readability, and makes the code easier to update if the structure changes.
+* __Refactoring:__ Combine multiple bindings and conditional checks into a single, flat form using constructs like `when-let`, `if-let`, or multi-binding `let` expressions. Instead of creating a new nested block for each intermediate extraction or check, prefer a structure that expresses sequential dependencies inline, making the data flow easier to follow.
 
-``` clojure
-(def user
-  {:profile {:contact {:email "user@example.com"}}})
+```clojure
+(defn process [user]
+  (when-let [city (some-> user :profile :address :city)]
+    (str "City: " city)))
 
-(defn user-profile [user]
-  (:profile user))
-
-(defn user-contact [profile]
-  (:contact profile))
-
-(defn user-email [contact]
-  (:email contact))
-
-(defn get-user-email [user]
-  (-> user
-      user-profile
-      user-contact
-      user-email))
-
-(println (get-user-email user))
+(process {:profile {:address {:city "Recife"}}})
 ```
 
-## Middle Man
+* __Sources and Excerpts:__
 
-* __Description:__ This code smell occurs when a function serves mainly to pass data or delegate calls to another function without adding meaningful transformation, validation, or abstraction. This redundant indirection unnecessarily complicates the codebase and obscures the program's true flow. In object-oriented programming this smell often manifests through classes that merely forward method calls.
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+      **Excerpt:** “Plenty of macros with binding forms don't need to be nested.”
 
-* __Example:__ 
+## Direct usage of `clojure.lang.RT`
 
-``` clojure
-(defn build-person [x]
-  {:name (:name x) :age (:age x)})
-
-(defn build-persons [xs]
-  (map build-person xs))
-
-(def people [{:name "Alice" :age 30}
-             {:name "Bob" :age 25}])
-
-(println (build-persons people))
-```
-
-* __Refactoring:__ When a function only serves as a pass-through to another function (e.g., wrapping map, filter, or similar without adding any new behavior), it introduces unnecessary indirection. It's better to remove the intermediary and use the higher-order function directly. This simplifies the code, makes dependencies more explicit, and improves maintainability.
-
-``` clojure
-(defn build-person [x]
-  {:name (:name x) :age (:age x)})
-
-(def people [{:name "Alice" :age 30}
-             {:name "Bob" :age 25}])
-
-(println (map build-person people))
-```
-
-## Inappropriate Intimacy
-
-* __Description:__ This code smell occurs when functions, modules, or data structures become overly dependent on each other's internal representations or behaviors. This tight coupling reduces modularity, complicates maintenance, and makes it harder to evolve or reason about the system independently.
-
-* __Example:__ 
-
-``` clojure
-(def session
-  (proxy [clojure.lang.IDeref] []
-    (deref []
-      {:user-id 42 :role "admin"})
-    (store []
-      {:type ::memory-store})))
-
-(println @session)
-```
-
-* __Refactoring:__ The session object mixes concerns: it implements a core protocol (IDeref) but leaks storage-specific logic (e.g. read-session, .store). This creates tight coupling and misuse of IDeref. Replace with a plain function and protocol for clarity and separation.
-
-``` clojure
-(defprotocol SessionStore
-  (read-session [this]))
-
-(defrecord MemoryStore []
-  SessionStore
-  (read-session [_]
-    {:user-id 42 :role "admin"}))
-
-(defn get-session [store]
-  (read-session store))
-
-(def session-store (->MemoryStore))
-
-(println (get-session session-store))
-```
-
-* __Sources and Insights:__
-
-  -  **Source:** https://bsless.github.io/code-smells/ <br>
-    **Insight:** “To compose for a sequential use case we could have used transducers. Now we are tied to a sequential concretion”
-
-## Comments
-
-* __Description:__ This code smell occurs when functions, modules, or data structures become overly dependent on each other's internal representations or behaviors. This tight coupling reduces modularity, complicates maintenance, and makes it harder to evolve or reason about the system independently.
-
-* __Example:__ 
-
-``` clojure
-(ns examples.smells.comments
-  (:require [clojure.string :as str]))
-
-(defn save-user [user]
-  ;; simulate saving to database
-  (println "Saving user:" user))
-
-(defn process-user [user]
-  ;; validate input
-  (when-not (:email user)
-    (throw (Exception. "Missing email")))
-  (when-not (:id user)
-    (throw (Exception. "Missing ID")))
-
-  ;; transform data
-  (let [username (str/lower-case (:email user))
-        uid (str "user-" (:id user))]
-
-    ;; store in database
-    (save-user {:username username
-                :uid uid
-                :email (:email user)})))
-
-(process-user {:id 1 :email "Exemplo@Email.com"})
-```
-
-* __Refactoring:__ Comments are being used to separate logical sections of code. Instead, extract those sections into well-named functions. This improves readability and avoids the need for explanatory comments.
-
-``` clojure
-(ns examples.smells.comments
-  (:require [clojure.string :as str]))
-
-(defn save-user [user]
-  (println "Saving user:" user))
-
-(defn validate-user [user]
-  (when-not (:email user)
-    (throw (Exception. "Missing email")))
-  (when-not (:id user)
-    (throw (Exception. "Missing ID")))
-  user)
-
-(defn transform-user [user]
-  {:username (str/lower-case (:email user))
-   :uid (str "user-" (:id user))
-   :email (:email user)})
-
-(defn process-user [user]
-  (-> user
-      validate-user
-      transform-user
-      save-user))
-
-(process-user {:id 1 :email "Exemplo@Email.com"})
-```
-
-* __Sources and Insights:__
-
-  -  **Source:** https://pragtob.wordpress.com/2017/11/14/are-comments-a-code-smell-yes-no-it-depends/ <br>
-    **Insight:** “There is so much more that you can do to make your code more readable instead of resorting to a comment. Comments should be a last resort”.
-
-## Mixed Paradigms
-
-* __Description:__ This code smell occurs when two or more distinct programming paradigms are used together in a way that forces interoperability. The blending of approaches — such as functional and imperative or object-oriented and procedural — can introduce confusion, reduce clarity, and complicate the design, as different paradigms impose conflicting constraints and expectations.
-
-* __Example:__ 
-
-``` clojure
-(defrecord Counter [value])
-
-(defn make-counter []
-  (->Counter (atom 0)))
-
-(defn increment-counter [^Counter c]
-  (swap! (:value c) inc))
-
-(def counter (make-counter))
-
-(println (increment-counter counter))
-(println (increment-counter counter))
-```
-
-* __Refactoring:__ This mixes object-oriented mutable state (set!, .value) into Clojure's functional paradigm, making the code imperative, thread-unsafe, and non-idiomatic. Prefer functional state tools like atom.
-
-``` clojure
-(defn make-counter []
-  (atom 0))
-
-(defn increment-counter [counter]
-  (swap! counter inc))
-
-(def counter (make-counter))
-
-(println (increment-counter counter))
-(println (increment-counter counter))
-```
-
-* __Sources and Insights:__
-
-  -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/?rdt=57161 <br>
-    **Insight:** “And a related antipattern is to write imperative style code in one big function”.
-  -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/?rdt=57161 <br>
-    **Insight:** “How to refactor a Java singleton to Clojure?<br> [...] <br>
-    So if you want to learn how to write good Clojure code, you'll have to learn how to avoid (most) mutable state at some point”.
-
-## Library Locker
-
-* __Description:__ This code smell occurs when an application wraps a third-party library with its own functions or abstractions, often obscuring or complicating the library's usage.
+* __Description:__ This code smell occurs when Clojure code directly invokes methods from the `clojure.lang.RT` class, such as `clojure.lang.RT/iter`, to perform operations that are not exposed through the public Clojure API. The RT class is part of Clojure's internal implementation and is not intended for direct use in application code. Directly invoking methods from this class can lead to fragile code that is susceptible to breakage with future updates to the language.
 
 * __Example:__
+```clojure
+(defn print-all [xs]
+  (let [it (clojure.lang.RT/iter xs)]
+    (loop []
+      (when (.hasNext it)
+        (println (.next it))
+        (recur)))))
 
-``` clojure
-(ns examples.smells.library-locker
-  (:require [clj-http.client :as client]))
-
-(defn do-get [url]
-  (client/get url))
-
-(defn do-post [url data]
-  (client/post url {:body data}))
-
-(defn fetch-data []
-  (do-get "https://httpbin.org/get"))
-
-(defn send-data [info]
-  (do-post "https://httpbin.org/post" info))
-
-(println (fetch-data))
-(println (send-data "test"))
+(print-all [1 2 3])
 ```
 
-* __Refactoring:__ Remove unnecessary wrappers and rely directly on the third-party library. This improves clarity, avoids indirection, and keeps the code simpler and easier to maintain.
+* __Refactoring:__ Avoid using `clojure.lang.RT` directly and prefer public sequence operations like `doseq`, `map`, or `reduce`. These idiomatic constructs are more readable, safe, and portable across Clojure versions.
 
-``` clojure
-(ns examples.refactored.library-locker-refactored
-  (:require [clj-http.client :as client]))
+```clojure
+(defn print-all [xs]
+  (doseq [x xs]
+    (println x)))
 
-(defn fetch-data []
-  (client/get "https://httpbin.org/get"))
-
-(defn send-data [info]
-  (client/post "https://httpbin.org/post" {:body info}))
-
-(println (fetch-data))
-(println (send-data "test"))
+(print-all [1 2 3])
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-  -  **Source:** https://thomascothran.tech/2023/08/library-locker/ <br>
-    **Insight:** “The “Library Locker” is a common anti-pattern for incorporating third party libraries into an application”
+  -  **Source:** [Forum - Is interop with clojure.lang.RT an anti-pattern in clojure? / consider adding iter to clojure.core](https://ask.clojure.org/index.php/10303/interop-clojure-pattern-clojure-consider-adding-iter-clojure)<br>
+      **Excerpt:** “RT should be considered internal implementation and should not be called directly. Iterators, in general, are very un-clojurey. They are stateful and generally not concurrency friendly.”
+
 
 # Functional-related Smells
 
@@ -686,7 +508,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Example:__
 
 ```clojure
-;; From source
+;; Example from source
 (def m
   {:one {:two {:three 3 :four 4 :five 5}}})
   (->> ((comp :two :one) m)
@@ -734,10 +556,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 )
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
-    **Insight:** “Overabundance of partial application and composition”
+   -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
+    **Excerpt:** “Overabundance of partial application and composition”
 
 ## Overuse Of High-Order Functions
 
@@ -756,7 +578,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (let [double (fn [x] (* 2 x))]
     (transform-list double data)))
 
-(println (process-data [1 2 3 4])) 
+(println (process-data [1 2 3 4]))
 ```
 
 * __Refactoring:__ Excessive use of higher-order functions adds unnecessary complexity and makes the code harder to understand. Instead of layering multiple functions, we can simplify the logic by directly applying the required transformation.
@@ -765,22 +587,22 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (defn process-data [data]
   (map #(* 4 %) data))
 
-(println (process-data [1 2 3 4])) 
+(println (process-data [1 2 3 4]))
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
-    **Insight:** “Designing everything as higher order functions”
+   -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
+    **Excerpt:** “Designing everything as higher order functions”
 
 ## Trivial Lambda
 
 * __Description:__ This code smell occurs when anonymous functions (lambdas) are excessively used instead of named functions, reducing code clarity and reusability. This is especially problematic when lambda expressions are chained or become overly complex, making the code harder to read, understand, and maintain.
 
-* __Example:__ 
+* __Example:__
 
 ```clojure
-;; From source
+;; Example from source
 (map #(f %) xs)
 ```
 
@@ -796,7 +618,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Refactoring:__ The anonymous function #(square %) does nothing more than calling square directly. This is redundant. Pass the function by name instead.
 
 ```clojure
-;; From source
+;; Refactored example from source
 (map f xs)
 ```
 
@@ -809,12 +631,12 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (map square numbers))
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
-    **Insight:** “Anonymous functions for everything”
-  -  **Source:** https://bsless.github.io/code-smells/<br>
-  **Insight:** “Trivial Lambda”
+   -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
+    **Excerpt:** “Anonymous functions for everything”
+  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+  **Excerpt:** “Trivial Lambda”
 
 ## Deeply-nested Call Stacks
 
@@ -862,10 +684,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (map process-user users))
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
-    **Insight:** “Each nested function call is a jump in context which makes it difficult for a reader to track, and it limits available information in the scope so it's generally less flexible.”
+   -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
+    **Excerpt:** “Each nested function call is a jump in context which makes it difficult for a reader to track, and it limits available information in the scope so it's generally less flexible.”
 
 ## Inappropriate Collection
 
@@ -874,7 +696,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Example:__
 
 ```clojure
-;; From source
+;; Example from source
 (def people
   [{:person/name "Fred"}
    {:person/name "Ethel"}
@@ -907,7 +729,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Refactoring:__ Scanning a sequential collection to find an item by a key is inefficient and obscures intent. Use an associative structure like group-by to enable fast, direct access.
 
 ```clojure
-;; From source
+;; Refactored example from source
 
 ;; With group-by:
 (def collected-people
@@ -933,14 +755,14 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (def collected-people
   (into {} (map (fn [p] [(:person/name p) p]) people)))
 
-(println (contains? collected-people "Fred")) 
+(println (contains? collected-people "Fred"))
 (println (contains? collected-people "Alice"))
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://bsless.github.io/code-smells/<br>
-    **Insight:** “If you find yourself scanning collections of maps looking for a map where a certain key has a certain value, your collection might be telling you it wants to be associative, not sequential”
+   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+    **Excerpt:** “If you find yourself scanning collections of maps looking for a map where a certain key has a certain value, your collection might be telling you it wants to be associative, not sequential”
 
 ## Premature Optimization
 
@@ -986,14 +808,14 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   #(get-file-from-network "/path/to/file.txt"))
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://grishaev.me/en/clojure-with-retry/<br>
-    **Insight:** “There might be dozens of reasons when your request fails, and there is no way to recover. Instead of invoking a resource again and again, you must investigate what went wrong”.
+   -  **Source:** [Clojure AntiPatterns: the with-retry macro](https://grishaev.me/en/clojure-with-retry/)<br>
+    **Excerpt:** “There might be dozens of reasons when your request fails, and there is no way to recover. Instead of invoking a resource again and again, you must investigate what went wrong”.
 
 ## Lazy Side Effects
 
-* __Description:__ This code smell occurs when side effects (such as state changes or external interactions) happen within lazy evaluated code. Since lazy evaluation delays computation until needed, these side effects may not execute as expected, leading to unpredictable behavior and making the code harder to debug and maintain. 
+* __Description:__ This code smell occurs when side effects (such as state changes or external interactions) happen within lazy evaluated code. Since lazy evaluation delays computation until needed, these side effects may not execute as expected, leading to unpredictable behavior and making the code harder to debug and maintain.
 
 * __Example:__
 
@@ -1030,10 +852,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 ;; Notifying value: 2
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://dawranliou.com/blog/default-transducers/<br>
-    **Insight:** “There might be dozens of reasons when your request fails, and there is no way to recover. Instead of invoking a resource again and again, you must investigate what went wrong”
+   -  **Source:** [Defaulting to Transducers](https://dawranliou.com/blog/default-transducers/)<br>
+    **Excerpt:** “There might be dozens of reasons when your request fails, and there is no way to recover. Instead of invoking a resource again and again, you must investigate what went wrong”
 
 ## External Data Coupling
 
@@ -1084,6 +906,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
     (process-user user)))
 ```
 
+* __Sources and Excerpts:__
+
+   -  **Source:** [Ep 108: Testify!](https://clojuredesign.club/episode/108-testify/)<br>
+    **Excerpt:** “It's really tempting to use the external data as your working data.”
 
 ## Inefficient Filtering
 
@@ -1111,10 +937,15 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (gen/sample gen-even-int 5))
 ```
 
+* __Sources and Excerpts:__
+
+   -  **Source:** [Ep 108: Testify!](https://clojuredesign.club/episode/108-testify/)<br>
+    **Excerpt:** “It's really tempting to use the external data as your working data.
+
 
 ## Hidden Side Effects
 
-* __Description:__ This code smell occurs when functions perform side effects—such as I/O operations, state mutations, or logging—without making them explicit in their name, structure, or usage context. In functional programming, clarity around purity is essential for reasoning and testing. 
+* __Description:__ This code smell occurs when functions perform side effects—such as I/O operations, state mutations, or logging—without making them explicit in their name, structure, or usage context. In functional programming, clarity around purity is essential for reasoning and testing.
 
 * __Example:__
 ```clojure
@@ -1146,10 +977,10 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (greet-users! users))
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
-    **Insight:** “Make your side-effects obvious”
+   -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
+    **Excerpt:** “Make your side-effects obvious”
 
 ## Explicit Recursion
 
@@ -1174,9 +1005,9 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (double-nums [1 2 3 4])
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-   -  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
+   -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
     **Insight:** “Using explicit recursion tends to be a code smell, there's a good chance that there's a higher order function that can do the job”
 
 ## Reinventing the Wheel
@@ -1186,7 +1017,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Example:__
 
 ```clojure
-;; From source
+;; Example from source
 (apply concat (map f xs))
 ```
 
@@ -1209,7 +1040,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Refactoring:__ Replace custom anonymous functions and manual logic with Clojure’s built-in sequence functions such as `map`, `mapcat`, `filter`, `second`, or keyword-as-function idioms. These idioms express intent more clearly, reduce verbosity, and produce safer, more maintainable code.
 
 ```clojure
-;; From source
+;; Refactored example from source
 (mapcat f xs)
 ```
 
@@ -1229,20 +1060,21 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   {:name "Carol" :active true  :tags ["editor" "reviewer"]}])
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-    -  **Source:** https://bsless.github.io/code-smells/<br>
-    **Insight:** “Sometimes you need to concat the results of mapping. Using mapcat is an idiomatic option for this case.”
+    -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+    **Excerpt:** “Sometimes you need to concat the results of mapping. Using mapcat is an idiomatic option for this case.”
 
-   -  **Source:** https://itsrainingmani.dev/blog/smelly-code/<br>
-    **Insight:** “I ended up using the (apply concat (map f xs)) construct to solve quite a few problems when an idiomatic option would have been to simply use the mapcat function.”
+   -  **Source:** [Smelly Code](https://itsrainingmani.dev/blog/smelly-code/)<br>
+    **Excerpt:** “I ended up using the (apply concat (map f xs)) construct to solve quite a few problems when an idiomatic option would have been to simply use the mapcat function.”
 
 ## Positional Return Values
 
-* __Description:__ This code smell occurs when functions return multiple values using positional collections such as vectors or lists, rather than explicitly labeled maps. While concise, this practice relies on the consumer to remember the semantic meaning of each position. It introduces hidden contracts and makes the code harder to read, understand, and maintain—especially as the number of return values grows. 
+* __Description:__ This code smell occurs when functions return multiple values using positional collections such as vectors or lists, rather than explicitly labeled maps. While concise, this practice relies on the consumer to remember the semantic meaning of each position. It introduces hidden contracts and makes the code harder to read, understand, and maintain—especially as the number of return values grows.
 
 * __Example:__
 ```clojure
+;; Example from source
 (defn sieve
   [p xs]
   [(filter p xs) (remove p xs)])
@@ -1253,6 +1085,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 * __Refactoring:__ Refactor functions that return multiple values as positional collections into functions that return maps with descriptive keys. This makes the meaning of each returned value explicit, reducing cognitive load on consumers and minimizing errors related to incorrect indexing.
 
 ```clojure
+;; Refactored example from source
 (defn sieve
   [p xs]
   {:true (filter p xs) :false (remove p xs)})
@@ -1260,414 +1093,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (:true (sieve even? (range 9)))
 ```
 
-* __Sources and Insights:__
+* __Sources and Excerpts:__
 
-    -  **Source:** https://bsless.github.io/code-smells/<br>
-    **Insight:** “Using positional return values encodes meaning to indices, giving semantic or business meaning to indices/ordering. It's better to encode that meaning as explicit keywords”
-
-# Clojure-specific Smells
-
-## Unnecessary Macros
-
-* __Description:__ This code smell occurs when macros are used in situations where simpler, more conventional solutions—such as functions or existing language constructs—would suffice. While macros offer powerful metaprogramming capabilities, their overuse introduces unnecessary abstraction and complexity. This can obscure the code’s intent, make debugging more challenging and reducing maintainability.
-
-* __Example:__
-```clojure
-(defmacro unless [test & body]
-  `(if (not ~test)
-     (do ~@body)))
-
-(unless false
-  (println "This runs because test is false"))
-```
-
-* __Refactoring:__ Avoid macros when a simple function or existing language construct achieves the same goal. Replace macros with functions that clearly express the intent and minimize metaprogramming complexity. Use them only when necessary to extend language syntax or perform compile-time transformations that cannot be done with functions.
-
-```clojure
-(defn unless-fn [test & body]
-  (when (not test)
-    (doseq [expr body] expr)))
-
-(unless-fn false
-  (println "This runs because test is false"))
-```
-
--  **Source:** https://news.ycombinator.com/item?id=34052268<br>
-    **Insight:** “Using macros when regular functions would do is a good example of that. It is absolutely possible to write impenetrable Clojure if you start doing weird things just because you can.”
-
-## Immutability Violation
-
-* __Description:__ This code smell Immutability occurs when mutable state is used in a language or paradigm that emphasizes immutability (such as Clojure), leading to side effects, reduced predictability, and harder-to-maintain code. 
-
-* __Example:__
-
-``` clojure
-(def countries {})
-
-(defn update-country [country]
-  (def countries (assoc countries (:name country) country)))
-
-(update-country {:name "Brazil" :pop 210})
-(println countries)
-```
-
-* __Refactoring:__ Avoid redefining vars inside functions. Make your updater return a new value so state stays immutable.
-
-``` clojure
-(defn update-country [countries country]
-  (assoc countries (:name country) country))
-
-(let [countries (update-country {} {:name "Brazil" :pop 210})]
-  (println countries))
-```
-
--  **Source:** https://softwareengineering.stackexchange.com/questions/219780/how-to-refactor-a-java-singleton-to-clojure<br>
-    **Insight:** “Mutable state totally destroys this concept, and with it, the advantages of pure code. Clojure doesn't force you to be pure, but it certainly makes it easy to do so”
-
-## Namespaced Keys Neglect
-
-* __Description:__ This code smell occurs when developers rely on unqualified keywords (e.g., `:id`, `:name`) instead of using namespaced keywords (e.g., `:user/id`, `:order/name`). While seemingly harmless, this practice leads to ambiguity, increased risk of key collisions, and reduced semantic clarity — particularly in large or modular systems.
-
-* __Example:__
-```clojure
-(def user {:id 1 :name "Alice"})
-(def order {:id 101 :name "Order-101"})
-
-(println (:id user))    ;; 1
-(println (:id order))   ;; 101
-```
-
-* __Refactoring:__ Always use namespaced keywords to clearly distinguish data domains and reduce ambiguity. This practice prevents key collisions in complex systems, improves code readability by providing explicit context, and makes it easier to reason about and maintain data structures across different modules or libraries.
-
-```clojure
-(def user {:user/id 1 :user/name "Alice"})
-(def order {:order/id 101 :order/name "Order-101"})
-
-(println (:user/id user))    ;; 1
-(println (:order/id order))  ;; 101
-```
-
--  **Source:** https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/<br>
-    **Insight:** “Namespaced keywords are good. Use them.”
-
-## Improper Emptiness Check
-
-* __Description:__ This code smell occurs when developers use verbose or less idiomatic constructs—such as (`not (empty? x)`)—to determine whether a collection is non-empty, instead of leveraging the more concise and expressive idiom (`seq x`). In Clojure, the concept of emptiness is nuanced: `nil` is considered empty, sequences can be infinite or lazy, and realization may matter. Using `seq` not only simplifies the check but also aligns with Clojure’s idiomatic style, improving readability and avoiding redundant negation or abstraction layers.
-
-* __Example:__
-```clojure
-(defn process-if-not-empty [coll]
-  (when (not (empty? coll))
-    (str "Processing: " coll)))
-
-(defn process-if-empty [coll]
-  (when (= 0 (count coll))
-    "Empty collection detected"))
-
-[(process-if-not-empty [])
- (process-if-not-empty [1 2])
- (process-if-empty [])
- (process-if-empty [1])]
-```
-
-* __Refactoring:__ Avoid verbose or redundant checks like `(not (empty? x))` and `(= 0 (count x))`. Instead, use `(seq x)` to test for non-emptiness and `(empty? x)` to test for emptiness. These forms are shorter, idiomatic, and clearer in expressing intent, while also avoiding unnecessary collection realization and reducing potential confusion with nil handling.
-
-```clojure
-(defn process-if-not-empty [coll]
-  (when (seq coll)
-    (str "Processing: " coll)))
-
-(defn process-if-empty [coll]
-  (when (empty? coll)
-    "Empty collection detected"))
-
-[(process-if-not-empty [])
- (process-if-not-empty [1 2])
- (process-if-empty [])
- (process-if-empty [1])]
-```
-
--  **Source:** https://bsless.github.io/code-smells/<br>
-    **Insight:** “Don't use (not (empty? x))!”
-
-
-## Accessing non-existent Map Fiels
-
-* __Description:__ This code smell occurs when code accesses map keys that may not exist, relying on nil as a default return without explicit handling. In Clojure, (`get m :key`) returns `nil` both when the key is missing and when it is explicitly associated with `nil`, which can obscure intent and lead to subtle bugs. Since Clojure maps treat `nil` as both a value and a signal of absence, the distinction between "missing" and "present but empty" becomes ambiguous. 
-
-* __Example:__
-```clojure
-(defn welcome-message [user]
-  (str "Welcome, " (:name user)))
-
-(welcome-message {:id 42})
-(welcome-message {:id 43 :name nil})
-```
-
-* __Refactoring:__ To eliminate this smell, first try to avoid inserting `nil` values into maps when you have control over their construction—using utilities like `assoc-some` or `prune-nils` can help. When reading from a map, avoid assuming `nil` means absence. Instead, use (`contains? m :key`) to test key presence explicitly. This clarifies intent and prevents subtle bugs caused by missing fields or keys deliberately set to nil.
-
-```clojure
-(defn welcome-message [user]
-  (if (contains? user :name)
-    (str "Welcome, " (:name user))
-    "Name not provided"))
-
-[(welcome-message {:id 42})
- (welcome-message {:id 44 :name "Alice"})]
-```
-
-
-## Unnecessary `into`
-
-* __Description:__ This code smell occurs when the `into` function is used in situations where more concise or idiomatic alternatives exist, leading to unnecessarily verbose or inefficient code. While into is useful for combining collections, it is often misused for simple type transformations—such as (`into [] coll`) instead of `vec`.
-
-* __Example:__
-```clojure
-(def users [{:id 1 :active true} {:id 2 :active false} {:id 3 :active true}])
-
-(defn active-ids [users]
-  (into [] (map :id (filter :active users))))
-
-(defn id-set [users]
-  (into #{} (map :id users)))
-
-(defn rename-keys [m]
-  (into {} (map (fn [[k v]] [(keyword (str "new-" (name k))) v]) m)))
-
-(comment
-  (active-ids users) ;; => [1 3]
-  (id-set users)     ;; => #{1 2 3}
-  (rename-keys {:a 1 :b 2}) ;; => {:new-a 1, :new-b 2}
-)
-```
-
-* __Refactoring:__ To eliminate this smell, replace uses of `into []` with `vec`, and `into #{}` with `set`, for clarity and intent. When transforming maps, prefer `reduce-kv` to avoid the extra indirection of (`into {} (map ...)`). These alternatives reduce verbosity, improve performance, and align with idiomatic Clojure practices.
-
-```clojure
-(def users [{:id 1 :active true} {:id 2 :active false} {:id 3 :active true}])
-
-(defn active-ids [users]
-  (vec (map :id (filter :active users))))
-
-(defn id-set [users]
-  (set (map :id users)))
-
-(defn rename-keys [m]
-  (reduce-kv (fn [acc k v] (assoc acc (keyword (str "new-" (name k))) v)) {} m))
-
-(comment
-  (active-ids users) ;; => [1 3]
-  (id-set users)     ;; => #{1 2 3}
-  (rename-keys {:a 1 :b 2}) ;; => {:new-a 1, :new-b 2}
-)
-```
-
-
-## Conditional Build-Up
-
-* __Description:__ This code smell occurs when a state is incrementally constructed through a series of `let`, `if`, and `assoc` expressions, leading to verbose and imperative-style code. Rather than clearly expressing the transformation logic, this pattern scatters conditional state mutations across multiple branches, making it harder to reason about the overall flow. 
-
-* __Example:__
-```clojure
-(defn f0 [in] (* in 10))
-(defn f1 [in] (+ in 1))
-(defn f2 [in] (- in 1))
-(defn p1 [in] (pos? in))
-(defn p2 [in] (even? in))
-
-(defn foo [in]
-  (let [m {:k0 (f0 in)}
-        m (if (p1 in) (assoc m :k1 (f1 in)) m)
-        m (if (p2 in) (assoc m :k2 (f2 in)) m)]
-    m))
-
-(foo 2)
-```
-
-* __Refactoring:__ Replace imperative-style stepwise construction (via repeated  `let`/`if`/`assoc`) with `cond->`, which cleanly threads conditional transformations. This improves clarity by co-locating conditions with the associated changes, avoids repetitive rebinding, and communicates intent more directly.
-
-```clojure
-(defn f0 [in] (* in 10))
-(defn f1 [in] (+ in 1))
-(defn f2 [in] (- in 1))
-(defn p1 [in] (pos? in))
-(defn p2 [in] (even? in))
-
-(defn foo
-  [in]
-  (cond-> {:k0 (f0 in)}
-    (p1 in) (assoc :k1 (f1 in))
-    (p2 in) (assoc :k2 (f2 in))))
-
-(foo 2)
-```
-
-
-## Verbose Checks
-
-* __Description:__ This code smell arises when developers manually implement common checks (such as checking if a number is zero, positive, or negative), when Clojure already provides clear, idiomatic functions that do the same. This results in verbose and less readable code, and misses an opportunity to leverage Clojure's built-in abstractions for clarity.
-
-* __Example:__
-```clojure
-(defn number-type [n]
-  (cond
-    (= n 0) :zero
-    (< 0 n) :positive
-    (> 0 n) :negative))
-
-(number-type 0)
-;; => :zero
-
-(number-type 5)
-;; => :positive
-
-(number-type -3)
-;; => :negative
-```
-
-* __Refactoring:__ Replace explicit numeric, boolean and nil comparisons like `(= n 0)`, `(< 0 n)`, `(> 0 n)`, `(= true x)`, `(= false x)` or `(= nil x)` with Clojure’s idiomatic predicates: `zero?`, `pos?`, `neg?`, `true?`, `false?` or `nil?`. These functions not only make the code more concise and expressive but also improve semantic clarity.
-
-```clojure
-(defn number-type [n]
-  (cond
-    (zero? n) :zero
-    (pos? n)  :positive
-    (neg? n)  :negative))
-
-(number-type 0)
-
-(number-type 5)
-
-(number-type -3)
-```
-
-
-## Production `doall`
-
-* __Description:__ This code smell occurs when the `doall` function is used in production code to force realization of lazy sequences, often to trigger side effects or avoid deferred evaluation. While `doall` can be useful in REPL experimentation, its use in production undermines one of Clojure’s core strengths: laziness. For large or infinite sequences, this can lead to memory spikes and unpredictable performance. In production contexts, doall often signals poor abstraction choices and should prompt reconsideration of the control flow or evaluation strategy.
-
-* __Example:__
-```clojure
-(defn print-evens []
-  (doall (map #(println %) (filter even? (range 1000)))))
-
-(print-evens)
-```
-
-* __Refactoring:__ Replace `doall` with explicit constructs like `doseq`, `run!`, or `dorun` when your intent is to trigger side effects or consume a sequence. These constructs clearly communicate your purpose and avoid the accidental full realization of large or infinite sequences, which can cause memory issues or performance degradation. In most production scenarios, laziness should be preserved or explicitly managed through more idiomatic control structures. 
-
-```clojure
-(defn print-evens []
-  (doseq [n (filter even? (range 1000))]
-    (println n)))
-
-(print-evens)
-```
-
-
-## Redundant `do` block
-
-* __Description:__ This code smell occurs when developers wrap expressions in an explicit (`do ...`) block inside constructs that already support implicit sequencing, such as `let`, `when`, `if`, `fn`, `try`, `loop`, and others. This redundant use of do adds no semantic value but introduces unnecessary syntax, making the code appear more complex and imperative than it actually is. 
-
-* __Example:__
-```clojure
-(defn process-item [x]
-  (when (pos? x)
-    (do
-      (println "Processing:" x)
-      (* x 2))))
-
-(process-item 2)
-```
-
-* __Refactoring:__ Remove `do` blocks that are nested inside forms already capable of handling multiple expressions. These constructs perform implicit sequencing, so wrapping their bodies in a do block adds no functional value and increases syntactic noise.
-
-```clojure
-(defn process-item [x]
-  (when (pos? x)
-    (println "Processing:" x)
-    (* x 2)))
-
-(process-item 2)
-```
-
-
-## Thread Ignorance
-
-* __Description:__ This code smell occurs when developers avoid or misuse Clojure’s threading macros (`->`, `->>`, `some->`, `cond->`) in scenarios where they would provide clearer, more idiomatic data flow. Instead of leveraging threading to express stepwise transformations, code may fall back to repetitive bindings, deeply nested `let` or `when-let` forms, or manually sequenced function calls. This results in verbose, harder-to-follow logic and obscures the intent behind each transformation.
-
-* __Example:__
-```clojure
-(defn transform [xs]
-  (let [step1 (map inc xs)
-        step2 (filter even? step1)
-        step3 (reduce + step2)]
-    step3))
-
-(transform [1 2 3 4])
-```
-
-* __Refactoring:__ Favor Clojure's threading macros when performing stepwise transformations on data. These macros eliminate unnecessary intermediate bindings and reduce nesting, making the data flow explicit and linear.
-
-```clojure
-(defn transform [xs]
-  (->> xs
-       (map inc)
-       (filter even?)
-       (reduce +)))
-
-(transform [1 2 3 4])
-```
-
-## Nested Forms
-
-* __Description:__ This code smell occurs when multiple binding or iteration forms—such as `let`, `when-let`, `if-let`, or `doseq`—are unnecessarily nested instead of being combined in a single, flat form. While technically valid, this nesting introduces extra indentation and structural complexity without adding semantic value. It obscures the relationships between bindings, increases visual noise, and makes the code harder to read and reason about.
-
-* __Example:__
-```clojure
-(defn process [user]
-  (let [profile (:profile user)]
-    (when profile
-      (let [address (:address profile)]
-        (when address
-          (let [city (:city address)]
-            (str "City: " city)))))))
-
-(process {:profile {:address {:city "Recife"}}})
-```
-
-* __Refactoring:__ Combine multiple bindings and conditional checks into a single, flat form using constructs like `when-let`, `if-let`, or multi-binding `let` expressions. Instead of creating a new nested block for each intermediate extraction or check, prefer a structure that expresses sequential dependencies inline, making the data flow easier to follow.
-
-```clojure
-(defn process [user]
-  (when-let [city (some-> user :profile :address :city)]
-    (str "City: " city)))
-
-(process {:profile {:address {:city "Recife"}}})
-```
-
-## Direct usage of `clojure.lang.RT`
-
-* __Description:__ This code smell occurs when Clojure code directly invokes methods from the `clojure.lang.RT` class, such as `clojure.lang.RT/iter`, to perform operations that are not exposed through the public Clojure API. The RT class is part of Clojure's internal implementation and is not intended for direct use in application code. Directly invoking methods from this class can lead to fragile code that is susceptible to breakage with future updates to the language.
-
-* __Example:__
-```clojure
-(defn print-all [xs]
-  (let [it (clojure.lang.RT/iter xs)]
-    (loop []
-      (when (.hasNext it)
-        (println (.next it))
-        (recur)))))
-
-(print-all [1 2 3])
-```
-
-* __Refactoring:__ Avoid using `clojure.lang.RT` directly and prefer public sequence operations like `doseq`, `map`, or `reduce`. These idiomatic constructs are more readable, safe, and portable across Clojure versions.
-
-```clojure
-(defn print-all [xs]
-  (doseq [x xs]
-    (println x)))
-
-(print-all [1 2 3])
-```
+    -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+    **Excerpt:** “Using positional return values encodes meaning to indices, giving semantic or business meaning to indices/ordering. It's better to encode that meaning as explicit keywords”
