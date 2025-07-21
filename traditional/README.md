@@ -80,75 +80,6 @@
       {:valid false :errors @errors})))
 ```
 
-* __Refactoring:__ Long function make the code harder to understand and reuse. By breaking them into smaller, well-named functions, we improve modularity and maintainability.
-
-```clojure
-(defn validate-name [name errors]
-  (if (string? name)
-    (do
-      (when (< (count name) 2)
-        (swap! errors conj "Name is too short."))
-      (when (> (count name) 100)
-        (swap! errors conj "Name is too long."))
-      (when (str/blank? name)
-        (swap! errors conj "Name cannot be blank."))
-      (when (re-find #"\d" name)
-        (swap! errors conj "Name must not contain numbers.")))
-    (swap! errors conj "Invalid name.")))
-
-(defn validate-email [email errors]
-  (if (string? email)
-    (do
-      (when (not (re-matches #".+@.+\..+" email))
-        (swap! errors conj "Invalid email format."))
-      (when (or (str/includes? email "spam")
-                (str/includes? email "fake"))
-        (swap! errors conj "Email contains suspicious terms."))
-      (when (str/ends-with? email ".xyz")
-        (swap! errors conj "Emails ending in .xyz are not allowed.")))
-    (swap! errors conj "Email must be a string.")))
-
-(defn validate-password [pwd errors]
-  (if (string? pwd)
-    (do
-      (when (not-any? #(Character/isUpperCase %) pwd)
-        (swap! errors conj "Password must contain an uppercase letter."))
-      (when (not-any? #(Character/isDigit %) pwd)
-        (swap! errors conj "Password must contain a number."))
-      (when (not-any? #(contains? #{\! \@ \# \$ \% \&} %) pwd)
-        (swap! errors conj "Password must contain a special character."))
-      (when (str/includes? pwd " ")
-        (swap! errors conj "Password must not contain spaces.")))
-    (swap! errors conj "Invalid password.")))
-
-(defn validate-age [age errors]
-  (cond
-    (nil? age) (swap! errors conj "Age is required.")
-    (not (number? age)) (swap! errors conj "Age must be a number.")
-    (> age 120) (swap! errors conj "Invalid age.")))
-
-(defn validate-preferences [prefs errors]
-  (if (sequential? prefs)
-    (do
-      (when (empty? prefs)
-        (swap! errors conj "Preferences list is empty."))
-      (when (> (count prefs) 20)
-        (swap! errors conj "Too many preferences.")))
-    (swap! errors conj "Preferences must be a list.")))
-
-(defn validate-user [user]
-  (let [errors (atom [])]
-    (validate-name (:name user) errors)
-    (validate-email (:email user) errors)
-    (validate-password (:password user) errors)
-    (validate-age (:age user) errors)
-    (validate-preferences (:preferences user) errors)
-
-    (if (empty? @errors)
-      {:valid true}
-      {:valid false :errors @errors})))
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/) <br>
@@ -171,25 +102,6 @@
    :phone phone})
 
 (println (create-user "Alice" "Smith" 30 "alice@example.com" "123 Main St" "555-1234"))
-```
-
-* __Refactoring:__ A long parameter list can be simplified by grouping related data into a single map, making the function easier to use and extend.
-
-```clojure
-(defn create-user [user-info]
-  {:first-name (:first-name user-info)
-   :last-name (:last-name user-info)
-   :age (:age user-info)
-   :email (:email user-info)
-   :address (:address user-info)
-   :phone (:phone user-info)})
-
-(println (create-user {:first-name "Alice"
-                       :last-name "Smith"
-                       :age 30
-                       :email "alice@example.com"
-                       :address "123 Main St"
-                       :phone "555-1234"}))
 ```
 
 * __Sources and Excerpts:__
@@ -218,28 +130,6 @@
       (do
         (println (str "User " full-name " is not valid. No notification sent."))
         {:full-name full-name :status "Invalid"}))))
-
-(println (process-user {:first-name "Alice" :last-name "Smith" :age 22}))
-```
-
-* __Refactoring:__ To reduce Divergent Change, we separate concerns into different functions. Now, formatting, validation, and notifications are handled independently, making modifications safer and more maintainable.
-
-```clojure
-(defn format-name [user]
-  (str (:first-name user) " " (:last-name user)))
-
-(defn valid-age? [user]
-  (>= (:age user) 18))
-
-(defn send-notification [user]
-  (println (str "User " (:full-name user) " is valid. Sending notification...")))
-
-(defn process-user [user]
-  (let [full-name (format-name user)
-        user-data {:full-name full-name :status (if (valid-age? user) "Valid" "Invalid")}]
-    (when (= "Valid" (:status user-data))
-      (send-notification user-data))
-    user-data))
 
 (println (process-user {:first-name "Alice" :last-name "Smith" :age 22}))
 ```
@@ -276,37 +166,6 @@
   (create-user "Alice" "alice@example.com" 30))
 ```
 
-* __Refactoring:__ To refactor the smell, centralize the logic or data structure that is being repeatedly modified across the codebase. Encapsulate related operations—like construction, access, or transformation—into a single module or set of functions. Update all scattered usages to rely on this central abstraction.
-
-``` clojure
-(defn make-user [{:keys [name email age]}]
-  {:name name
-   :email email
-   :age age})
-
-(defn get-name [user] (:name user))
-(defn get-email [user] (:email user))
-(defn get-age [user] (:age user))
-
-(defn save-user [user]
-  (println "Saving to DB:" (get-name user) (get-email user) (get-age user)))
-
-(defn send-welcome-email [user]
-  (println "Sending email to:" (get-email user)))
-
-(defn track-user [user]
-  (println "Tracking new user:" (get-name user) (get-age user)))
-
-(defn create-user [name email age]
-  (let [user (make-user {:name name :email email :age age})]
-    (save-user user)
-    (send-welcome-email user)
-    (track-user user)))
-
-(comment
-  (create-user "Alice" "alice@example.com" 30))
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Refactoring tests using builder functions in Clojure/ClojureScript](https://codesai.com/posts/2016/10/refactoring-tests-using-builder-functions-in-clojure-clojurescript) <br>
@@ -327,25 +186,6 @@
       {:type ::memory-store})))
 
 (println @session)
-```
-
-* __Refactoring:__ The session object mixes concerns: it implements a core protocol (IDeref) but leaks storage-specific logic (e.g. read-session, .store). This creates tight coupling and misuse of IDeref. Replace with a plain function and protocol for clarity and separation.
-
-``` clojure
-(defprotocol SessionStore
-  (read-session [this]))
-
-(defrecord MemoryStore []
-  SessionStore
-  (read-session [_]
-    {:user-id 42 :role "admin"}))
-
-(defn get-session [store]
-  (read-session store))
-
-(def session-store (->MemoryStore))
-
-(println (get-session session-store))
 ```
 
 * __Sources and Excerpts:__
@@ -386,36 +226,6 @@
 (process-user {:id 1 :email "Exemplo@Email.com"})
 ```
 
-* __Refactoring:__ Comments are being used to separate logical sections of code. Instead, extract those sections into well-named functions. This improves readability and avoids the need for explanatory comments.
-
-``` clojure
-(ns examples.smells.comments
-  (:require [clojure.string :as str]))
-
-(defn save-user [user]
-  (println "Saving user:" user))
-
-(defn validate-user [user]
-  (when-not (:email user)
-    (throw (Exception. "Missing email")))
-  (when-not (:id user)
-    (throw (Exception. "Missing ID")))
-  user)
-
-(defn transform-user [user]
-  {:username (str/lower-case (:email user))
-   :uid (str "user-" (:id user))
-   :email (:email user)})
-
-(defn process-user [user]
-  (-> user
-      validate-user
-      transform-user
-      save-user))
-
-(process-user {:id 1 :email "Exemplo@Email.com"})
-```
-
 * __Sources and Excerpt:__
 
   -  **Source:** [Are comments a code smell? Yes! No? It Depends.](https://pragtob.wordpress.com/2017/11/14/are-comments-a-code-smell-yes-no-it-depends/) <br>
@@ -435,21 +245,6 @@
 
 (defn increment-counter [^Counter c]
   (swap! (:value c) inc))
-
-(def counter (make-counter))
-
-(println (increment-counter counter))
-(println (increment-counter counter))
-```
-
-* __Refactoring:__ This mixes object-oriented mutable state (set!, .value) into Clojure's functional paradigm, making the code imperative, thread-unsafe, and non-idiomatic. Prefer functional state tools like atom.
-
-``` clojure
-(defn make-counter []
-  (atom 0))
-
-(defn increment-counter [counter]
-  (swap! counter inc))
 
 (def counter (make-counter))
 
@@ -485,22 +280,6 @@
 
 (defn send-data [info]
   (do-post "https://httpbin.org/post" info))
-
-(println (fetch-data))
-(println (send-data "test"))
-```
-
-* __Refactoring:__ Remove unnecessary wrappers and rely directly on the third-party library. This improves clarity, avoids indirection, and keeps the code simpler and easier to maintain.
-
-``` clojure
-(ns examples.refactored.library-locker-refactored
-  (:require [clj-http.client :as client]))
-
-(defn fetch-data []
-  (client/get "https://httpbin.org/get"))
-
-(defn send-data [info]
-  (client/post "https://httpbin.org/post" {:body info}))
 
 (println (fetch-data))
 (println (send-data "test"))

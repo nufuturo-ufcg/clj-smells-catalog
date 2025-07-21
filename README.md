@@ -4,7 +4,7 @@ This repository presents a catalog of code smells relevant to the Clojure ecosys
 
 In a nutshell, we analyzed developer discussions from forums, blogs, and other practitioner sources to identify recurring problematic patterns that experienced Clojure developers frequently encounter and discuss. The catalog was compiled from real-world examples shared by practitioners across various online platforms.
 
-The identified smells were organized in this repository, each with a description, code example, refactoring suggestion, and refactored version.
+The identified smells were organized in this repository, each with a description, code example, source and excerpt from source indicating the smell.
 
 This catalog reflects the current stage of our ongoing study. We plan to expand it in future phases, following the model of the Elixir work. Contributions are welcome via issues and pull requests.
 
@@ -55,17 +55,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (println "This runs because test is false"))
 ```
 
-* __Refactoring:__ Avoid macros when a simple function or existing language construct achieves the same goal. Replace macros with functions that clearly express the intent and minimize metaprogramming complexity. Use them only when necessary to extend language syntax or perform compile-time transformations that cannot be done with functions.
-
-```clojure
-(defn unless-fn [test & body]
-  (when (not test)
-    (doseq [expr body] expr)))
-
-(unless-fn false
-  (println "This runs because test is false"))
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Forum - Structuring Clojure applications](https://news.ycombinator.com/item?id=34052268)<br>
@@ -87,16 +76,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (update-country {:name "Brazil" :pop 210})
 ```
 
-* __Refactoring:__ Avoid redefining vars inside functions. Make your updater return a new value so state stays immutable.
-
-``` clojure
-(defn update-country [countries country]
-  (assoc countries (:name country) country))
-
-(let [countries (update-country {} {:name "Brazil" :pop 210})]
-  (println countries))
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Forum - How to refactor a Java singleton to Clojure?](https://softwareengineering.stackexchange.com/questions/219780/how-to-refactor-a-java-singleton-to-clojure)<br>
@@ -113,16 +92,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 (println (:id user))    ;; 1
 (println (:id order))   ;; 101
-```
-
-* __Refactoring:__ Always use namespaced keywords to clearly distinguish data domains and reduce ambiguity. This practice prevents key collisions in complex systems, improves code readability by providing explicit context, and makes it easier to reason about and maintain data structures across different modules or libraries.
-
-```clojure
-(def user {:user/id 1 :user/name "Alice"})
-(def order {:order/id 101 :order/name "Order-101"})
-
-(println (:user/id user))    ;; 1
-(println (:order/id order))  ;; 101
 ```
 
 * __Sources and Excerpts:__
@@ -150,23 +119,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
  (process-if-empty [1])]
 ```
 
-* __Refactoring:__ Avoid verbose or redundant checks like `(not (empty? x))` and `(= 0 (count x))`. Instead, use `(seq x)` to test for non-emptiness and `(empty? x)` to test for emptiness. These forms are shorter, idiomatic, and clearer in expressing intent, while also avoiding unnecessary collection realization and reducing potential confusion with nil handling.
-
-```clojure
-(defn process-if-not-empty [coll]
-  (when (seq coll)
-    (str "Processing: " coll)))
-
-(defn process-if-empty [coll]
-  (when (empty? coll)
-    "Empty collection detected"))
-
-[(process-if-not-empty [])
- (process-if-not-empty [1 2])
- (process-if-empty [])
- (process-if-empty [1])]
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
@@ -184,18 +136,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 (welcome-message {:id 42})
 (welcome-message {:id 43 :name nil})
-```
-
-* __Refactoring:__ To eliminate this smell, first try to avoid inserting `nil` values into maps when you have control over their construction—using utilities like `assoc-some` or `prune-nils` can help. When reading from a map, avoid assuming `nil` means absence. Instead, use (`contains? m :key`) to test key presence explicitly. This clarifies intent and prevents subtle bugs caused by missing fields or keys deliberately set to nil.
-
-```clojure
-(defn welcome-message [user]
-  (if (contains? user :name)
-    (str "Welcome, " (:name user))
-    "Name not provided"))
-
-[(welcome-message {:id 42})
- (welcome-message {:id 44 :name "Alice"})]
 ```
 
 * __Sources and Excerpts:__
@@ -220,27 +160,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 (defn rename-keys [m]
   (into {} (map (fn [[k v]] [(keyword (str "new-" (name k))) v]) m)))
-
-(comment
-  (active-ids users) ;; => [1 3]
-  (id-set users)     ;; => #{1 2 3}
-  (rename-keys {:a 1 :b 2}) ;; => {:new-a 1, :new-b 2}
-)
-```
-
-* __Refactoring:__ To eliminate this smell, replace uses of `into []` with `vec`, and `into #{}` with `set`, for clarity and intent. When transforming maps, prefer `reduce-kv` to avoid the extra indirection of (`into {} (map ...)`). These alternatives reduce verbosity, improve performance, and align with idiomatic Clojure practices.
-
-```clojure
-(def users [{:id 1 :active true} {:id 2 :active false} {:id 3 :active true}])
-
-(defn active-ids [users]
-  (vec (map :id (filter :active users))))
-
-(defn id-set [users]
-  (set (map :id users)))
-
-(defn rename-keys [m]
-  (reduce-kv (fn [acc k v] (assoc acc (keyword (str "new-" (name k))) v)) {} m))
 
 (comment
   (active-ids users) ;; => [1 3]
@@ -276,24 +195,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (foo 2)
 ```
 
-* __Refactoring:__ Replace imperative-style stepwise construction (via repeated  `let`/`if`/`assoc`) with `cond->`, which cleanly threads conditional transformations. This improves clarity by co-locating conditions with the associated changes, avoids repetitive rebinding, and communicates intent more directly.
-
-```clojure
-(defn f0 [in] (* in 10))
-(defn f1 [in] (+ in 1))
-(defn f2 [in] (- in 1))
-(defn p1 [in] (pos? in))
-(defn p2 [in] (even? in))
-
-(defn foo
-  [in]
-  (cond-> {:k0 (f0 in)}
-    (p1 in) (assoc :k1 (f1 in))
-    (p2 in) (assoc :k2 (f2 in))))
-
-(foo 2)
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
@@ -322,22 +223,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 ;; => :negative
 ```
 
-* __Refactoring:__ Replace explicit numeric, boolean and nil comparisons like `(= n 0)`, `(< 0 n)`, `(> 0 n)`, `(= true x)`, `(= false x)` or `(= nil x)` with Clojure’s idiomatic predicates: `zero?`, `pos?`, `neg?`, `true?`, `false?` or `nil?`. These functions not only make the code more concise and expressive but also improve semantic clarity.
-
-```clojure
-(defn number-type [n]
-  (cond
-    (zero? n) :zero
-    (pos? n)  :positive
-    (neg? n)  :negative))
-
-(number-type 0)
-
-(number-type 5)
-
-(number-type -3)
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
@@ -352,16 +237,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 ```clojure
 (defn print-evens []
   (doall (map #(println %) (filter even? (range 1000)))))
-
-(print-evens)
-```
-
-* __Refactoring:__ Replace `doall` with explicit constructs like `doseq`, `run!`, or `dorun` when your intent is to trigger side effects or consume a sequence. These constructs clearly communicate your purpose and avoid the accidental full realization of large or infinite sequences, which can cause memory issues or performance degradation. In most production scenarios, laziness should be preserved or explicitly managed through more idiomatic control structures.
-
-```clojure
-(defn print-evens []
-  (doseq [n (filter even? (range 1000))]
-    (println n)))
 
 (print-evens)
 ```
@@ -386,17 +261,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (process-item 2)
 ```
 
-* __Refactoring:__ Remove `do` blocks that are nested inside forms already capable of handling multiple expressions. These constructs perform implicit sequencing, so wrapping their bodies in a do block adds no functional value and increases syntactic noise.
-
-```clojure
-(defn process-item [x]
-  (when (pos? x)
-    (println "Processing:" x)
-    (* x 2)))
-
-(process-item 2)
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
@@ -413,18 +277,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
         step2 (filter even? step1)
         step3 (reduce + step2)]
     step3))
-
-(transform [1 2 3 4])
-```
-
-* __Refactoring:__ Favor Clojure's threading macros when performing stepwise transformations on data. These macros eliminate unnecessary intermediate bindings and reduce nesting, making the data flow explicit and linear.
-
-```clojure
-(defn transform [xs]
-  (->> xs
-       (map inc)
-       (filter even?)
-       (reduce +)))
 
 (transform [1 2 3 4])
 ```
@@ -452,16 +304,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (process {:profile {:address {:city "Recife"}}})
 ```
 
-* __Refactoring:__ Combine multiple bindings and conditional checks into a single, flat form using constructs like `when-let`, `if-let`, or multi-binding `let` expressions. Instead of creating a new nested block for each intermediate extraction or check, prefer a structure that expresses sequential dependencies inline, making the data flow easier to follow.
-
-```clojure
-(defn process [user]
-  (when-let [city (some-> user :profile :address :city)]
-    (str "City: " city)))
-
-(process {:profile {:address {:city "Recife"}}})
-```
-
 * __Sources and Excerpts:__
 
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
@@ -479,16 +321,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
       (when (.hasNext it)
         (println (.next it))
         (recur)))))
-
-(print-all [1 2 3])
-```
-
-* __Refactoring:__ Avoid using `clojure.lang.RT` directly and prefer public sequence operations like `doseq`, `map`, or `reduce`. These idiomatic constructs are more readable, safe, and portable across Clojure versions.
-
-```clojure
-(defn print-all [xs]
-  (doseq [x xs]
-    (println x)))
 
 (print-all [1 2 3])
 ```
@@ -539,23 +371,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 )
 ```
 
-* __Refactoring:__ Replace chains of tiny composed or partially applied functions with more explicit and readable steps. Use `let` bindings or threading macros (`->`, `->>`) to clarify how data flows through each transformation.
-
-``` clojure
-(defn extract-domain [data]
-  (let [email (get-in data [:user :email])
-        cleaned (-> email str/trim str/lower-case)
-        parts   (str/split cleaned #"@")]
-    (second parts)))
-
-(defn describe-user [data]
-  (str "Domain: " (extract-domain data)))
-
-(comment
-  (describe-user {:user {:email "  Bob@Example.org  "}})
-)
-```
-
 * __Sources and Excerpts:__
 
    -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
@@ -577,15 +392,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (defn process-data [data]
   (let [double (fn [x] (* 2 x))]
     (transform-list double data)))
-
-(println (process-data [1 2 3 4]))
-```
-
-* __Refactoring:__ Excessive use of higher-order functions adds unnecessary complexity and makes the code harder to understand. Instead of layering multiple functions, we can simplify the logic by directly applying the required transformation.
-
-```clojure
-(defn process-data [data]
-  (map #(* 4 %) data))
 
 (println (process-data [1 2 3 4]))
 ```
@@ -615,22 +421,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (map #(square %) numbers))
 ```
 
-* __Refactoring:__ The anonymous function #(square %) does nothing more than calling square directly. This is redundant. Pass the function by name instead.
-
-```clojure
-;; Refactored example from source
-(map f xs)
-```
-
-``` clojure
-(defn square [x]
-  (* x x))
-
-(def numbers [1 2 3 4])
-
-(println (map square numbers))
-```
-
 * __Sources and Excerpts:__
 
    -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
@@ -650,31 +440,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 (defn process-user [user]
   (assoc user :username (sanitize (:name (first (sort-by :created-at (:accounts user)))))))
-
-(def users [{:name "Alice"
-             :accounts [{:created-at "2020-01-01" :name "Main"}]}
-            {:name "Bob"
-             :accounts [{:created-at "2019-05-01" :name "Legacy"}]}])
-
-(println (map process-user users))
-```
-
-* __Refactoring:__ Deeply nested expressions (especially within sanitize) reduce readability and make debugging harder. Break the nested calls into intermediate steps.
-
-``` clojure
-(defn sanitize [s]
-  (-> s
-      (clojure.string/replace #"[^a-zA-Z0-9]" "")
-      clojure.string/lower-case
-      clojure.string/trim))
-
-(defn earliest-account-name [accounts]
-  (:name (first (sort-by :created-at accounts))))
-
-(defn process-user [user]
-  (let [account-name (earliest-account-name (:accounts user))
-        username (sanitize account-name)]
-    (assoc user :username username)))
 
 (def users [{:name "Alice"
              :accounts [{:created-at "2020-01-01" :name "Main"}]}
@@ -726,39 +491,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 (println (boolean (person-in-people? "Alice" people)))
 ```
 
-* __Refactoring:__ Scanning a sequential collection to find an item by a key is inefficient and obscures intent. Use an associative structure like group-by to enable fast, direct access.
-
-```clojure
-;; Refactored example from source
-
-;; With group-by:
-(def collected-people
-  (group-by :person/name people))
-
-(contains? collected-people "Fred");; => true
-(contains? collected-people "Bob") ;; => false
-
-;; With clojure.set/index
-(def collected-people
-  (clojure.set/index people [:person/name]))
-
-(contains? collected-people {:person/name "Fred"});; => true
-(contains? collected-people {:person/name "Bob"}) ;; => false
-```
-
-``` clojure
-(def people
-  [{:person/name "Fred"}
-   {:person/name "Ethel"}
-   {:person/name "Lucy"}])
-
-(def collected-people
-  (into {} (map (fn [p] [(:person/name p) p]) people)))
-
-(println (contains? collected-people "Fred"))
-(println (contains? collected-people "Alice"))
-```
-
 * __Sources and Excerpts:__
 
    -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
@@ -788,26 +520,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (get-file-from-network "/path/to/file.txt"))
 ```
 
-* __Refactoring:__ This macro retries blindly on failure, regardless of the error type. It introduces complexity early, without knowing if retrying is the right solution. Prefer explicit handling with functions and selective retry logic.
-
-``` clojure
-(defn with-retry [[attempts timeout] func]
-  (loop [n attempts]
-    (let [[e result]
-          (try
-            [nil (func)]
-            (catch Throwable e
-              [e nil]))]
-      (cond
-        (nil? e) result
-        (> n 0) (do (Thread/sleep timeout)
-                    (recur (dec n)))
-        :else (throw (Exception. "all attempts exhausted" e))))))
-
-(with-retry [3 2000]
-  #(get-file-from-network "/path/to/file.txt"))
-```
-
 * __Sources and Excerpts:__
 
    -  **Source:** [Clojure AntiPatterns: the with-retry macro](https://grishaev.me/en/clojure-with-retry/)<br>
@@ -830,26 +542,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
      (map notify)
      (filter even?))
 ;; No output printed
-```
-
-* __Refactoring:__ Lazy sequences defer execution, which causes side effects like println to never run unless explicitly realized. Use into with transducers to make evaluation eager and effects reliable.
-
-``` clojure
-(defn notify [x]
-  (println "Notifying value:" x)
-  x)
-
-(def data (range 3))
-
-(into []
-      (comp
-        (map notify)
-        (filter even?))
-      data)
-;; Prints:
-;; Notifying value: 0
-;; Notifying value: 1
-;; Notifying value: 2
 ```
 
 * __Sources and Excerpts:__
@@ -880,32 +572,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (process-user raw-user-data))
 ```
 
-* __Refactoring:__ Transform raw external data into a well-defined internal representation as early as possible. Encapsulate this transformation in a single function or module. Then, ensure the rest of your application interacts only with the internal structure.
-
-``` clojure
-(def raw-user-data
-  {:user_name "alice"
-   :user_age 30
-   :user_email "alice@example.com"})
-
-;; Transform external data into an internal model
-(defn transform-user [external-user]
-  {:name  (:user_name external-user)
-   :age   (:user_age external-user)
-   :email (:user_email external-user)})
-
-(defn process-user [user]
-  (println "Welcome," (:name user))
-  (println "Your email is:" (:email user))
-  (if (> (:age user) 18)
-    (println "You are an adult.")
-    (println "You are a minor.")))
-
-(comment
-  (let [user (transform-user raw-user-data)]
-    (process-user user)))
-```
-
 * __Sources and Excerpts:__
 
    -  **Source:** [Ep 108: Testify!](https://clojuredesign.club/episode/108-testify/)<br>
@@ -922,17 +588,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 (def gen-even-int
   (gen/such-that even? gen/int))
-
-(println (gen/sample gen-even-int 5))
-```
-
-* __Refactoring:__ Replace broad, post-filtered generators with ones that produce only valid values, eliminating wasted generation.
-
-``` clojure
-(require '[clojure.test.check.generators :as gen])
-
-(def gen-even-int
-  (gen/fmap #(* 2 %) (gen/choose 0 500)))
 
 (println (gen/sample gen-even-int 5))
 ```
@@ -961,22 +616,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (greet-users users))
 ```
 
-* __Refactoring:__ Move side-effecting operations—such as `println`, logging, or I/O—outside of lazy or pure constructs like `map` or `filter`, and use `doseq` or `run!` for explicit sequencing. Clearly signal side effects by naming such functions with a `!` suffix, and keep pure functions strictly side-effect-free to improve clarity, testability, and reasoning.
-
-```clojure
-(defn greet-user! [user]
-  ;; Side effect now explicit and named
-  (println "Hello," (:name user)))
-
-(defn greet-users! [users]
-  ;; Use doseq for side effects
-  (doseq [user users]
-    (greet-user! user)))
-
-(let [users [{:name "Alice"} {:name "Bob"} {:name "Carol"}]]
-  (greet-users! users))
-```
-
 * __Sources and Excerpts:__
 
    -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
@@ -992,15 +631,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   (if (empty? nums)
     '()
     (cons (* 2 (first nums)) (double-nums (rest nums)))))
-
-(double-nums [1 2 3 4])
-```
-
-* __Refactoring:__ Replace manual recursion with higher-order functions like `map`, `reduce`, or `filter`. These abstractions make code more concise, idiomatic, and easier to reason about.
-
-```clojure
-(defn double-nums [nums]
-  (map #(* 2 %) nums))
 
 (double-nums [1 2 3 4])
 ```
@@ -1037,29 +667,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   {:name "Carol" :active true  :tags ["editor" "reviewer"]}])
 ```
 
-* __Refactoring:__ Replace custom anonymous functions and manual logic with Clojure’s built-in sequence functions such as `map`, `mapcat`, `filter`, `second`, or keyword-as-function idioms. These idioms express intent more clearly, reduce verbosity, and produce safer, more maintainable code.
-
-```clojure
-;; Refactored example from source
-(mapcat f xs)
-```
-
-```clojure
-(defn process-data [data]
-  (let [filtered (filter :active data)
-        names (map :name filtered)
-        seconds (map second (map :tags filtered))
-        flat-tags (mapcat :tags filtered)]
-    {:names names
-     :seconds seconds
-     :flat-tags flat-tags}))
-
-(process-data
- [{:name "Alice" :active true  :tags ["admin" "editor"]}
-  {:name "Bob"   :active false :tags ["viewer" "editor"]}
-  {:name "Carol" :active true  :tags ["editor" "reviewer"]}])
-```
-
 * __Sources and Excerpts:__
 
     -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
@@ -1080,17 +687,6 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
   [(filter p xs) (remove p xs)])
 
 (first (sieve even? (range 9)))
-```
-
-* __Refactoring:__ Refactor functions that return multiple values as positional collections into functions that return maps with descriptive keys. This makes the meaning of each returned value explicit, reducing cognitive load on consumers and minimizing errors related to incorrect indexing.
-
-```clojure
-;; Refactored example from source
-(defn sieve
-  [p xs]
-  {:true (filter p xs) :false (remove p xs)})
-
-(:true (sieve even? (range 9)))
 ```
 
 * __Sources and Excerpts:__
