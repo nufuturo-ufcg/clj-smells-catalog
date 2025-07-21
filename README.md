@@ -1,12 +1,20 @@
 # Catalog of Clojure-related code smells
 
-This repository presents a catalog of code smells relevant to the Clojure ecosystem. The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
+This repository presents a catalog of code smells related to the Clojure ecosystem. Each smell contains a description, code example, source and supporting excerpt from source indicating the smell.
 
-In a nutshell, we analyzed developer discussions from forums, blogs, and other practitioner sources to identify recurring problematic patterns that experienced Clojure developers frequently encounter and discuss. The catalog was compiled from real-world examples shared by practitioners across various online platforms.
+Alongside this catalog, we are also compiling a complementary catalog of traditional code smells described in the literature, which have likewise been observed in the Clojure ecosystem. The catalog is available [here](/traditional/README.md).
 
-The identified smells were organized in this repository, each with a description, code example, source and excerpt from source indicating the smell.
+# Methodolody
 
-This catalog reflects the current stage of our ongoing study. We plan to expand it in future phases, following the model of the Elixir work. Contributions are welcome via issues and pull requests.
+The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
+
+In a nutshell, we analyzed developer discussions from forums, blogs, and other practitioner sources to identify recurring problematic patterns that experienced Clojure developers frequently encounter and discuss. The catalog was compiled from real-world experience shared by practitioners across various online platforms.
+
+This catalog reflects the current stage of our ongoing study. In this phase, we are promoting the catalog through the main communication channels of the Clojure comunity, with the aim of gathering community contributions and continuously refining and expanding the catalog.
+
+We plan to expand it in future phases, following the model of the Elixir work.
+
+Contributions are welcome via Issues and Pull Requests.
 
 # Table of Smells
 <!-- no toc -->

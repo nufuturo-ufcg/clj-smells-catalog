@@ -1,3 +1,9 @@
+# Catalog of traditional smells in Clojure
+
+This repository is a companion to the [Clojure-specific code smells catalog](/README.md), focusing on traditional code smells from the literature, especially those proposed by Fowler and Beck. Although originally associated with object-oriented languages, these smells are revisited here in the context of the Clojure ecosystem.
+
+The catalog adopts the same structure and methodology as the main catalog, including a description, code example, source, and supporting excerpt for each smell.
+
 # Table of Smells
 <!-- no toc -->
 * [Traditional smells](#traditional-smells)
