@@ -6,7 +6,7 @@
 (defn get-email [user] (:email user))
 (defn trim [s] (str/trim s))
 (defn lower [s] (str/lower-case s))
-(def domain (comp second (partial split-at "@")))
+(def domain (comp second #(str/split % #"@")))
 
 ;; Compose everything into a pipeline
 (def process-email
