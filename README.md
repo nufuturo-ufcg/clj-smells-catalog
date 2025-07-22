@@ -98,7 +98,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
                          {:first-name "Charlie" :last-name "Brown" :age 25}])) 
 ```
 
-* __Refactoring:__ Long function make the code harder to understand and reuse. By breaking them into smaller, well-named functions, we improve modularity and maintainability.
+* __Refactoring:__ Long functions make the code harder to understand and reuse. By breaking them into smaller, well-named functions, we improve modularity and maintainability.
 
 ```clojure
 (defn is-adult? [user]
@@ -849,7 +849,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 ## Inefficient Filtering
 
-* __Description:__ This code smell occurs when the data generator makes excessive use of filters (such as such-that) to constrain the generated values. Instead of genering only valid values directly, the generator creates a large number of values and filters them afterward, resulting in resource waste and potential performance issues.
+* __Description:__ This code smell occurs when the data generator makes excessive use of filters (such as such-that) to constrain the generated values. Instead of generating only valid values directly, the generator creates a large number of values and filters them afterward, resulting in resource waste and potential performance issues.
 
 * __Example:__
 
@@ -1001,7 +1001,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 ## Unnecessary Macros
 
-* __Description:__ This code smell occurs when macros are used in situations where simpler, more conventional solutions—such as functions or existing language constructs—would suffice. While macros offer powerful metaprogramming capabilities, their overuse introduces unnecessary abstraction and complexity. This can obscure the code’s intent, make debugging more challenging and reducing maintainability.
+* __Description:__ This code smell occurs when macros are used in situations where simpler, more conventional solutions—such as functions or existing language constructs—would suffice. While macros offer powerful metaprogramming capabilities, their overuse introduces unnecessary abstraction and complexity. This can obscure the code’s intent, make debugging more challenging and reduce maintainability.
 
 * __Example:__
 ```clojure
@@ -1027,7 +1027,7 @@ This catalog reflects the current stage of our ongoing study. We plan to expand 
 
 ## Immutability Violation
 
-* __Description:__ This code smell Immutability occurs when mutable state is used in a language or paradigm that emphasizes immutability (such as Clojure), leading to side effects, reduced predictability, and harder-to-maintain code. 
+* __Description:__ This code smell occurs when mutable state is used in a language or paradigm that emphasizes immutability (such as Clojure), leading to side effects, reduced predictability, and harder-to-maintain code. 
 
 * __Example:__
 
