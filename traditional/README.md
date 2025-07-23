@@ -99,15 +99,18 @@ The catalog adopts the same structure and methodology as the main catalog, inclu
 * __Example:__
 
 ```clojure
-(defn create-user [first-name last-name age email address phone]
-  {:first-name first-name
-   :last-name last-name
-   :age age
+(defn register-new-user
+  [username password email phone age gender location interests newsletter-opt-in referred-by]
+  {:username username
+   :password password
    :email email
-   :address address
-   :phone phone})
-
-(println (create-user "Alice" "Smith" 30 "alice@example.com" "123 Main St" "555-1234"))
+   :phone phone
+   :age age
+   :gender gender
+   :location location
+   :interests interests
+   :newsletter newsletter-opt-in
+   :referral referred-by})
 ```
 
 * __Sources and Excerpts:__

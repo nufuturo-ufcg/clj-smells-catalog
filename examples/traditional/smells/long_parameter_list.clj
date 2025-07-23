@@ -1,11 +1,27 @@
 (ns examples.traditional.smells.long-parameter-list)
 
-(defn create-user [first-name last-name age email address phone]
-  {:first-name first-name
-   :last-name last-name
-   :age age
+(defn register-new-user
+  [username password email phone age gender location interests newsletter-opt-in referred-by]
+  {:username username
+   :password password
    :email email
-   :address address
-   :phone phone})
+   :phone phone
+   :age age
+   :gender gender
+   :location location
+   :interests interests
+   :newsletter newsletter-opt-in
+   :referral referred-by})
 
-(println (create-user "Alice" "Smith" 30 "alice@example.com" "123 Main St" "555-1234"))
+(println
+ (register-new-user
+  "alice123"              
+  "securepass"            
+  "alice@example.com"     
+  "555-1234"              
+  30                      
+  "female"                
+  "123 Main St"           
+  ["reading" "hiking"]    
+  true                    
+  "referral-code-xyz"))   
