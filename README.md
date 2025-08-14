@@ -118,7 +118,7 @@ Contributions are welcome via Issues and Pull Requests.
     (str "Processing: " coll)))
 
 (defn process-if-empty [coll]
-  (when (= 0 (count coll))
+  (when (seq coll)
     "Empty collection detected"))
 
 [(process-if-not-empty [])
