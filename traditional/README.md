@@ -15,6 +15,8 @@ The catalog adopts the same structure and methodology as the main catalog, inclu
   * [Comments](#comments)
   * [Mixed paradigms](#mixed-paradigms)
   * [Library locker](#library-locker)
+  * [Deferred anti-pattern](#deferred-anti-pattern)
+  * [Promise-callback hell](#promise-callback-hell)
 
 # Traditional Smells
 
@@ -298,3 +300,45 @@ The catalog adopts the same structure and methodology as the main catalog, inclu
 
   -  **Source:** [The Library Locker - An Antipattern](https://thomascothran.tech/2023/08/library-locker/) <br>
     **Excerpt:** “The “Library Locker” is a common anti-pattern for incorporating third party libraries into an application”
+
+## Deferred Anti-pattern
+
+* __Description:__ Occurs when code manually creates a new Promise object (often using a pattern like `Promise.pending()` or `$q.defer()`) to wrap a function that is already asynchronous and returns a Promise or uses a standard callback convention. This superfluous wrapping violates the principle of Promise chaining, destroys the proper propagation of errors and rejections, and significantly increases complexity and boilerplate without adding any functional value.
+
+* __Example:__
+
+``` clojure
+;; Example from source
+(let [p (promise)]
+   ...
+   (if something (deliver p :good) (fail p (Exception. ...)))
+   ...
+  p)
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Promise Anti Patterns](https://github.com/petkaantonov/bluebird/wiki/Promise-anti-patterns#the-deferred-anti-pattern) <br>
+    **Excerpt:** “This is the most common anti-pattern. It is easy to fall into this when you don't really understand promises and think of them as glorified event emitters or callback utility.”
+  -  **Source:** [Issue](https://github.com/funcool/promesa/issues/60) <br>
+    **Excerpt:** “Because the "deferred" is an anti pattern.”
+
+## Promise-Callback Hell
+
+* __Description:__ Occurs when an asynchronous function returns a Promise or Deferred object and simultaneously accepts a callback function as a final argument for the same successful resolution. This creates a brittle dual asynchronous contract, forcing an unnecessarily large function arity, and leads to boilerplate code where the callback is merely passed through to the Promise's `.then()` method. This pattern complicates code flow, prevents the use of superior, linearized Promise composition idioms, and often indicates a function that is transitioning poorly from a callback-based API.
+
+* __Example:__
+
+``` clojure
+;; Not from source
+(defn save-credentials-smelly [user callback]
+  (let [result-promise (my-async-op user)]
+    (.then result-promise callback)
+    result-promise))
+```
+
+* __Sources and Excerpts:__
+
+  -  **Source:** [Pull Request](https://github.com/status-im/status-mobile/pull/15495) <br>
+    **Excerpt:** “`save-credentials` should not receive a `callback` argument. This is unnecessary for a function that returns a promise. It's actually a bad practice if the callback is just passed without modification to the final `.then` call.
+”
