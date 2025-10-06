@@ -33,7 +33,7 @@ Contributions are welcome via Issues and Pull Requests.
   - [Nested Forms](#nested-forms)
   - [Direct usage of `clojure.lang.RT`](#direct-usage-of-clojurelangrt)
   - [Non-Idiomatic Record Construction](#non-idiomatic-record-construction)
-  - [Unbounded Buffering in Channels](#unboudend-buffering-in-channels)
+  - [Unbounded Buffering in Channels](#unbounded-buffering-in-channels)
   - [Misuse of Dynamic Scope](#misuse-of-dynamic-scope)
   - [Implicit Namespace Dependencies](#implicit-namespace-dependencies)
   - [Namespace Load Side Effects](#namespace-load-side-effects)
@@ -389,7 +389,7 @@ Contributions are welcome via Issues and Pull Requests.
   -  **Source:** [Record Constructors](https://stuartsierra.com/2015/05/17/clojure-record-constructors/)<br>
       **Excerpt:** “defrecord and deftype compile into Java classes, so it is possible to construct them using Java interop syntax like this [...] But don't do that. Interop syntax is for interop with Java libraries.”
 
-## Unboudend Buffering in Channels
+## Unbounded Buffering in Channels
 
 * __Description:__ This smell occurs when a developer relies on an unbounded channel buffer (e.g., creating a channel with no size limit or an explicit `(chan)`). This disregard for backpressure and resource constraints, risking severe memory leaks (`OutOfMemoryError`) in production if the message producer is faster than the consumer. Channels should always specify a bounded buffer size or use explicit buffer types (`sliding-buffer`, `dropping-buffer`) to control resource consumption.
 
@@ -541,7 +541,7 @@ Contributions are welcome via Issues and Pull Requests.
 
   -  **Source:** [On the Perils of Dynamic Scope](https://stuartsierra.com/2013/03/29/perils-of-dynamic-scope/)<br>
       **Excerpt:** "The problem with this pattern, especially in libraries, is the constraints it imposes on any code that wants to use the library."
-  -  **Source:** [Issue](hhttps://github.com/steffan-westcott/clj-otel/issues/2)<br>
+  -  **Source:** [Issue](https://github.com/steffan-westcott/clj-otel/issues/2)<br>
       **Excerpt:** "I should also point out that I am unsure of the merits of dynamic scoped objects."
 
 ## Overengineering with `core.async`
@@ -586,6 +586,8 @@ Contributions are welcome via Issues and Pull Requests.
 
   -  **Source:** [Issue](https://github.com/clojure-emacs/refactor-nrepl/issues/305)<br>
       **Excerpt:** "Having tons of referred symbols is an anti-pattern anyway, so we should nudge people toward not doing that."
+  -  **Source:** [Issue](https://github.com/clj-kondo/clj-kondo/issues/342)<br>
+      **Excerpt:** "Clojure style guide recommends `:as` or `:refer [...]` over `:refer :all`"
 
 ## Unnecessary Laziness
 
@@ -1371,8 +1373,11 @@ Contributions are welcome via Issues and Pull Requests.
 
 * __Sources and Excerpts:__
 
-    -  **Source:** [Fixtures as Caches](https://stuartsierra.com/2016/05/19/fixtures-as-caches/)<br>
+    -  **Source:** [Pull Request](https://github.com/fluree/db/pull/244)<br>
     **Excerpt:** “I didn't mean to imply that we should never use `use-fixtures`, but that we should just use it sparingly.”
+    -  **Source:** [Fixtures as Caches](https://stuartsierra.com/2016/05/19/fixtures-as-caches/)<br>
+    **Excerpt:** “But if you want true isolation between your tests then they should not share any state at all. The only reason for sharing fixtures across tests is when the fixture does something expensive or time-consuming.”
+
 
 ## Inline Complex Operation
 
@@ -1392,5 +1397,5 @@ Contributions are welcome via Issues and Pull Requests.
 
 * __Sources and Excerpts:__
 
-    -  **Source:** [Issue](hhttps://github.com/oracle-samples/clara-rules/issues/383)<br>
+    -  **Source:** [Issue](https://github.com/oracle-samples/clara-rules/issues/383)<br>
     **Excerpt:** “Doing a bunch of (crazy) operations inline should be considered an anti-pattern. It also makes it more difficult to do optimizations like done here.”
