@@ -23,7 +23,7 @@ Contributions are welcome via Issues and Pull Requests.
   - [Immutability Violation](#immutability-violation)
   - [Namespaced Keys Neglect](#namespaced-keys-neglect)
   - [Improper Emptiness Check](#improper-emptiness-check)
-  - [Accessing non-existent Map Fields](#accessing-non-existent-map-fields)
+  - [Map_With_Nil_Values](#map-with-nil-values)
   - [Unnecessary `into`](#unnecessary-into)
   - [Conditional Build-Up](#conditional-build-up)
   - [Verbose Checks](#verbose-checks)
@@ -166,7 +166,7 @@ Contributions are welcome via Issues and Pull Requests.
       **Excerpt:** “Don't use (not (empty? x))!”
 
 
-## Accessing non-existent Map Fields
+## Map With Nil Values
 
 * __Description:__ This code smell occurs when code accesses map keys that may not exist, relying on nil as a default return without explicit handling. In Clojure, (`get m :key`) returns `nil` both when the key is missing and when it is explicitly associated with `nil`, which can obscure intent and lead to subtle bugs. Since Clojure maps treat `nil` as both a value and a signal of absence, the distinction between "missing" and "present but empty" becomes ambiguous.
 
