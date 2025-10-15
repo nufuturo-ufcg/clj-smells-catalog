@@ -23,7 +23,7 @@ Contributions are welcome via Issues and Pull Requests.
   - [Immutability Violation](#immutability-violation)
   - [Namespaced Keys Neglect](#namespaced-keys-neglect)
   - [Improper Emptiness Check](#improper-emptiness-check)
-  - [Map_With_Nil_Values](#map-with-nil-values)
+  - [Map With Nil Values](#map-with-nil-values)
   - [Unnecessary `into`](#unnecessary-into)
   - [Conditional Build-Up](#conditional-build-up)
   - [Verbose Checks](#verbose-checks)
