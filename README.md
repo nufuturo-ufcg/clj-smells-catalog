@@ -33,7 +33,6 @@ Contributions are welcome via Issues and Pull Requests.
   - [Nested Forms](#nested-forms)
   - [Direct usage of `clojure.lang.RT`](#direct-usage-of-clojurelangrt)
   - [Non-Idiomatic Record Construction](#non-idiomatic-record-construction)
-  - [Unbounded Buffering in Channels](#unbounded-buffering-in-channels)
   - [Misuse of Dynamic Scope](#misuse-of-dynamic-scope)
   - [Implicit Namespace Dependencies](#implicit-namespace-dependencies)
   - [Namespace Load Side Effects](#namespace-load-side-effects)
@@ -388,24 +387,6 @@ Contributions are welcome via Issues and Pull Requests.
   -  **Source:** [Code File](https://github.com/corpix/clojure-koans/blob/372ba7d2deb6b78d3c6a2fa0a7ed0d0c279b19f7/src/koans/19_datatypes.clj)<br>
   -  **Source:** [Record Constructors](https://stuartsierra.com/2015/05/17/clojure-record-constructors/)<br>
       **Excerpt:** “defrecord and deftype compile into Java classes, so it is possible to construct them using Java interop syntax like this [...] But don't do that. Interop syntax is for interop with Java libraries.”
-
-## Unbounded Buffering in Channels
-
-* __Description:__ This smell occurs when a developer relies on an unbounded channel buffer (e.g., creating a channel with no size limit or an explicit `(chan)`). This disregard for backpressure and resource constraints, risking severe memory leaks (`OutOfMemoryError`) in production if the message producer is faster than the consumer. Channels should always specify a bounded buffer size or use explicit buffer types (`sliding-buffer`, `dropping-buffer`) to control resource consumption.
-
-* __Example:__
-```clojure
-(let [c (chan)]
-  (go
-    (>! c 10)
-    (prn (<! c))))
-(chan)
-```
-
-* __Sources and Excerpts:__
-
-  -  **Source:** [Code File](https://github.com/ivo-/sandbox/blob/acc6a73e7bee009f3c52fb5aa6dc5327a2dc29c5/clojure/exploring/src/exploring/core/async.clj)<br>
-      **Excerpt:** "Unbounded buffering is discouraged and considered a bad practice."
 
 ## Misuse of Dynamic Scope
 
