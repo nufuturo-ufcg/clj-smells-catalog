@@ -168,7 +168,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Map With Nil Values
 
-* __Description:__ This code smell occurs when code accesses map keys that may not exist, relying on nil as a default return without explicit handling. In Clojure, (`get m :key`) returns `nil` both when the key is missing and when it is explicitly associated with `nil`, which can obscure intent and lead to subtle bugs. Since Clojure maps treat `nil` as both a value and a signal of absence, the distinction between "missing" and "present but empty" becomes ambiguous.
+* __Description:__ This code smell occurs when `nil` values are inserted into a map. In Clojure, both a missing key and a key explicitly associated with `nil` return `nil` when accessed, making it difficult to distinguish between the two cases. This ambiguity can obscure program intent, lead to subtle bugs, and complicate reasoning about data state. Instead of inserting `nil`, prefer omitting the key entirely or using a sentinel value that more clearly expresses the intended meaning.
 
 * __Example:__
 ```clojure
