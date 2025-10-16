@@ -486,7 +486,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Nested Atoms
 
-* __Description:__ Storing an `Atom` or other managed reference (like a `Volatile` or `Ref`) inside another `Atom`. This is a severe anti-pattern because it violates the principle of atomic state management. Updating the inner `Atom` does not update the outer `Atom`'s value, making it impossible to guarantee a single, consistent snapshot of the overall state at any time. This leads to subtle race conditions, complicates state transitions, and destroys the simplicity of the state model.
+* __Description:__ Storing an `Atom` or other managed reference (like a `Volatile` or `Ref`) inside another `Atom`. This is an anti-pattern because it violates the principle of atomic state management. Updating the inner `Atom` does not update the outer `Atom`'s value, making it impossible to guarantee a single, consistent snapshot of the overall state at any time. This might lead to complicated state transitions and undermine the simplicity of the state model.
 
 * __Example:__
 ```clojure
