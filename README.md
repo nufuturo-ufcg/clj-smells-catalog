@@ -53,7 +53,7 @@ Contributions are welcome via Issues and Pull Requests.
   - [Marker Protocol](#marker-protocol)
   - [Multiple Evaluation in Macros](#multiple-evaluation-in-macros)
   - [Case with Non-Literal Test Values](#case-with-non-literal-test-values)
-  - [Non-Idiomatic Parameter Biding](#non-idiomatic-parameter-biding)
+  - [Non-Idiomatic Parameter Binding](#non-idiomatic-parameter-binding)
   - [Private Multimethods](#private-multimethods)
 - [Functional-related Smells](#functional-related-smells)
   - [Overabstracted Composition](#overabstracted-composition)
@@ -784,9 +784,9 @@ Contributions are welcome via Issues and Pull Requests.
   -  **Source:** [Pull Request](https://github.com/status-im/status-mobile/pull/16781)<br>
       **Excerpt:** "`case` should be used only with literals"
 
-## Non-Idiomatic Parameter Biding
+## Non-Idiomatic Parameter Binding
 
-* __Description:__ The use of confusing or non-standard syntax (such as `& [x]`) to define a single optional argument or variadic arity. This binding method is verbose, structurally confusing (as it captures a single argument into a sequence), and obscures the function's contract. This must be refactored by replacing the complex binding with the explicit, idiomatic practice of using multiple function arities or a clean options map.
+* __Description:__ The use of confusing or non-standard syntax (such as `& [x]`) to define a single optional argument or variadic arity. This binding method is verbose, structurally confusing (as it captures a single argument from a sequence), and obscures the function's contract. This must be refactored by replacing the complex binding with the explicit, idiomatic practice of using multiple function arities or a clean options map.
 
 * __Example:__
 ```clojure
