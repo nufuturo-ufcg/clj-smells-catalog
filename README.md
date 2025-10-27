@@ -87,12 +87,10 @@ Contributions are welcome via Issues and Pull Requests.
 
 * __Example:__
 ```clojure
-(defmacro unless [test & body]
-  `(if (not ~test)
-     (do ~@body)))
-
-(unless false
-  (println "This runs because test is false"))
+(defmacro log-and-exec [expr]
+  `(do
+     (println "Executing expression:" (quote ~expr))
+     ~expr))
 ```
 
 * __Sources and Excerpts:__
@@ -102,7 +100,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Immutability Violation
 
-* __Description:__ This code smell Immutability occurs when mutable state is used in a language or paradigm that emphasizes immutability (such as Clojure), leading to side effects, reduced predictability, and harder-to-maintain code.
+* __Description:__ This code smell occurs when mutable state is used in a language or paradigm that emphasizes immutability (such as Clojure), leading to side effects, reduced predictability, and harder-to-maintain code.
 
 * __Example:__
 
@@ -429,7 +427,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Namespace Load Side Effects
 
-* __Description:__ Performing operations such as `require` or `requiring-resolve` in a top-level form outside of the primary `ns` macro. This is a severe anti-pattern because it introduces hidden, dynamic dependencies that bypass the build tool's static dependency graph. This breaks predictable load ordering, leading to non-deterministic compilation, making the code harder to analyze, test, and maintain.
+* __Description:__ Performing operations such as `require` or `requiring-resolve` in a top-level form outside of the primary `ns` macro. This is a anti-pattern because it introduces hidden, dynamic dependencies that bypass the build tool's static dependency graph. This breaks predictable load ordering, leading to non-deterministic compilation, making the code harder to analyze, test, and maintain.
 
 * __Example:__
 ```clojure
@@ -484,7 +482,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Single-segment Namespace
 
-* __Description:__ This structural anti-pattern occurs when a project uses single-segment namespaces (e.g., `digest` or `config` instead of `my-app.digest` or `my-app.config`). This practice violates the standard, hierarchical naming convention of the Clojure ecosystem, causing severe issues: it increases the risk of global naming collisions, reduces the clarity of code organization, and frequently leads to tooling errors that rely on predictable, qualified names.
+* __Description:__ This structural anti-pattern occurs when a project uses single-segment namespaces (e.g., `digest` or `config` instead of `my-app.digest` or `my-app.config`). This practice violates the standard, hierarchical naming convention of the Clojure ecosystem, causing issues: it increases the risk of global naming collisions, reduces the clarity of code organization, and frequently leads to tooling errors that rely on predictable, qualified names.
 
 * __Example:__
 ```clojure
@@ -548,7 +546,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Excessive Refers
 
-* __Description:__ Occurs when a namespace explicitly `refer`s a large number of Vars (or uses the severe anti-pattern `(:refer :all)`) from another namespace. This practice leads to Namespace Pollution, drastically increases the risk of name collisions with other libraries or future code, and makes the source of any function call ambiguous.
+* __Description:__ Occurs when a namespace explicitly `refer`s a large number of Vars (or uses the anti-pattern `(:refer :all)`) from another namespace. This practice leads to Namespace Pollution, drastically increases the risk of name collisions with other libraries or future code, and makes the source of any function call ambiguous.
 
 * __Example:__
 ```clojure
@@ -589,7 +587,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Relying on Load-Time Side Effects
 
-* __Description:__ The practice of relying on a function or macro's output being static or globally available because it was evaluated as a top-level form during namespace loading. This is a severe anti-pattern because the code relies on the unmanaged side effect of the loading process and the mutable state of the running system. This fragility breaks static analysis, causes non-deterministic behavior during REPL reloading, and violates the functional contract that code should be safe regardless of execution order.
+* __Description:__ The practice of relying on a function or macro's output being static or globally available because it was evaluated as a top-level form during namespace loading. This is a anti-pattern because the code relies on the unmanaged side effect of the loading process and the mutable state of the running system. This fragility breaks static analysis, causes non-deterministic behavior during REPL reloading, and violates the functional contract that code should be safe regardless of execution order.
 
 * __Example:__
 ```clojure
@@ -728,7 +726,7 @@ Contributions are welcome via Issues and Pull Requests.
 
 ## Multiple Evaluation in Macros
 
-* __Description:__ This smell occurs when a macro inserts one of its input argument forms (which can be an arbitrary expression) into the generated code more than once without first binding it to a local, temporary variable (e.g., using a gensym like let `[value# ~value]`). This is a severe violation of macro hygiene and leads to Hidden Side Effects: the argument expression is unintentionally evaluated multiple times, causing performance degradation or triggering unwanted side effects for the caller.
+* __Description:__ This smell occurs when a macro inserts one of its input argument forms (which can be an arbitrary expression) into the generated code more than once without first binding it to a local, temporary variable (e.g., using a gensym like let `[value# ~value]`). This is a violation of macro hygiene and leads to Hidden Side Effects: the argument expression is unintentionally evaluated multiple times, causing performance degradation or triggering unwanted side effects for the caller.
 
 * __Example:__
 ```clojure
