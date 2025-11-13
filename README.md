@@ -89,7 +89,7 @@ Contributions are welcome via Issues and Pull Requests.
 ```clojure
 (defmacro log-and-exec [expr]
   `(do
-     (println "Executing expression:" (quote ~expr))
+     (println "Running...")
      ~expr))
 ```
 
