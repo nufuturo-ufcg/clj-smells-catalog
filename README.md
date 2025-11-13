@@ -1016,7 +1016,7 @@ Contributions are welcome via Issues and Pull Requests.
 * __Sources and Excerpts:__
 
    -  **Source:** [Defaulting to Transducers](https://dawranliou.com/blog/default-transducers/)<br>
-    **Excerpt:** “There might be dozens of reasons when your request fails, and there is no way to recover. Instead of invoking a resource again and again, you must investigate what went wrong”
+    **Excerpt:** “Although mapping a side-effect function over a sequence is almost certainly an anti-pattern, sometimes there are use cases for it. However, laziness in such cases might make you scratch your head for hours until you realize why the side effect never happened.”
 
 ## External Data Coupling
 
