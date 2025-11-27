@@ -16,6 +16,12 @@ In the next phase, we expanded the study by mining repositories from the Clojure
 
 Contributions are welcome via Issues and Pull Requests.
 
+# Summary of the Catalog
+
+- Clojure-specific smells: 35
+- Functional-related smells: 23
+- Traditional smells: 6
+
 # Table of Smells
 <!-- no toc -->
 - [Clojure-specific Smells](#clojure-specific-smells)
@@ -78,7 +84,8 @@ Contributions are welcome via Issues and Pull Requests.
   - [Lazy Sequence Accumulation](#lazy-sequence-accumulation)
   - [Global Test Fixture Cache](#global-test-fixture-cache)
   - [Inline Complex Operation](#inline-complex-operation)
-
+- [Traditional Smells](/traditional/README.md)
+  
 # Clojure-specific Smells
 
 ## Unnecessary Macros
