@@ -1,40 +1,13 @@
 # Catalog of Clojure-related code smells
 
-This repository presents a catalog of code smells related to the Clojure ecosystem. Each smell contains a description, code example, source and supporting excerpt from source indicating the smell. You can browse all identified smells in the [Table of Smells](#table-of-smells) below.
+This repository presents a catalog of code smells related to the Clojure ecosystem. Each smell contains a description, code example, source and supporting excerpt from source indicating the smell. 
 
 Alongside this catalog, we are also compiling a complementary catalog of traditional code smells described in the literature, which have likewise been observed in the Clojure ecosystem. The catalog of traditional smells is available [here](/traditional/README.md).
 
-# Methodology
-
-The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
-
-The figure below summarizes the overall research process:
-
-<p align="center">
-  <img 
-    src="https://github.com/user-attachments/assets/8c431516-f502-4176-a202-27b8b4f3a492"
-    width="50%"
-  />
-</p>
-
-<br/>
-
-In a nutshell, our study began with a structured Google search using keywords related to Clojure and code smells to locate relevant community discussions. From this search, we identified forums, blogs, and other practitioner-oriented sources where we analyzed reports and debates to uncover recurring problematic patterns frequently mentioned by experienced Clojure developers. Based on this initial analysis, we compiled the first version of the catalog, grounded in real-world experiences shared across various online platforms.
-
-After building this initial catalog, we shared it through the main communication channels of the Clojure community to gather feedback, validate the relevance of the identified smells, and understand how practitioners perceive them in practice.
-
-In the next phase, we expanded the study by mining repositories from the Clojure ecosystem on GitHub. We analyzed issues, pull requests, commits, and code files to identify new code smells. This second round of analysis allowed us to expand the catalog and strengthen its empirical foundation.
-
-Contributions are welcome via Issues and Pull Requests.
-
-# Summary of the Catalog
-
-- Clojure-specific smells: 35
-- Functional-related smells: 23
-- Traditional smells: 6
-
-# Table of Smells
+# Table of Contents
 <!-- no toc -->
+- [Methodology](#methodology)
+- [Summary of the Catalog](#summary-of-the-catalog)
 - [Clojure-specific Smells](#clojure-specific-smells)
   - [Unnecessary Macros](#unnecessary-macros)
   - [Immutability Violation](#immutability-violation)
@@ -96,6 +69,35 @@ Contributions are welcome via Issues and Pull Requests.
   - [Global Test Fixture Cache](#global-test-fixture-cache)
   - [Inline Complex Operation](#inline-complex-operation)
 - [Traditional Smells](/traditional/README.md)
+
+# Methodology
+
+The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
+
+The figure below summarizes the overall research process:
+
+<p align="center">
+  <img 
+    src="https://github.com/user-attachments/assets/8c431516-f502-4176-a202-27b8b4f3a492"
+    width="50%"
+  />
+</p>
+
+<br/>
+
+In a nutshell, our study began with a structured Google search using keywords related to Clojure and code smells to locate relevant community discussions. From this search, we identified forums, blogs, and other practitioner-oriented sources where we analyzed reports and debates to uncover recurring problematic patterns frequently mentioned by experienced Clojure developers. Based on this initial analysis, we compiled the first version of the catalog, grounded in real-world experiences shared across various online platforms.
+
+After building this initial catalog, we shared it through the main communication channels of the Clojure community to gather feedback, validate the relevance of the identified smells, and understand how practitioners perceive them in practice.
+
+In the next phase, we expanded the study by mining repositories from the Clojure ecosystem on GitHub. We analyzed issues, pull requests, commits, and code files to identify new code smells. This second round of analysis allowed us to expand the catalog and strengthen its empirical foundation.
+
+Contributions are welcome via Issues and Pull Requests.
+
+# Summary of the Catalog
+
+- Clojure-specific smells: 35
+- Functional-related smells: 23
+- Traditional smells: 6
   
 # Clojure-specific Smells
 
