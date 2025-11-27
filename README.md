@@ -8,11 +8,11 @@ Alongside this catalog, we are also compiling a complementary catalog of traditi
 
 The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
 
-In a nutshell, we analyzed developer discussions from forums, blogs, and other practitioner sources to identify recurring problematic patterns that experienced Clojure developers frequently encounter and discuss. The catalog was compiled from real-world experience shared by practitioners across various online platforms.
+In a nutshell, our study began with a structured Google search using keywords related to Clojure and code smells to locate relevant community discussions. From this search, we identified forums, blogs, and other practitioner-oriented sources where we analyzed reports and debates to uncover recurring problematic patterns frequently mentioned by experienced Clojure developers. Based on this initial analysis, we compiled the first version of the catalog, grounded in real-world experiences shared across various online platforms.
 
-This catalog reflects the current stage of our ongoing study. In this phase, we are promoting the catalog through the main communication channels of the Clojure comunity, with the aim of gathering community contributions and continuously refining and expanding the catalog.
+After building this initial catalog, we shared it through the main communication channels of the Clojure community to gather feedback, validate the relevance of the identified smells, and understand how practitioners perceive them in practice.
 
-We plan to expand it in future phases, following the model of the Elixir work.
+In the next phase, we expanded the study by mining repositories from the Clojure ecosystem on GitHub. We analyzed issues, pull requests, commits, and code files to identify new code smells. This second round of analysis allowed us to expand the catalog and strengthen its empirical foundation.
 
 Contributions are welcome via Issues and Pull Requests.
 
