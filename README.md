@@ -133,18 +133,11 @@ This repository presents a catalog of code smells related to the Clojure ecosyst
 
 * __Example:__
 ```clojure
-(defn process-if-not-empty [coll]
-  (when (not (empty? coll))
-    (str "Processing: " coll)))
+;; Example from source
 
-(defn process-if-empty [coll]
-  (when (= 0 (count coll))
-    "Empty collection detected"))
+(when (not (empty? x)) ...)
 
-[(process-if-not-empty [])
- (process-if-not-empty [1 2])
- (process-if-empty [])
- (process-if-empty [1])]
+(when-not (empty? x) ...)
 ```
 
 * __Sources and Excerpts:__
@@ -178,22 +171,15 @@ This repository presents a catalog of code smells related to the Clojure ecosyst
 
 * __Example:__
 ```clojure
-(def users [{:id 1 :active true} {:id 2 :active false} {:id 3 :active true}])
+;; Example from source
 
-(defn active-ids [users]
-  (into [] (map :id (filter :active users))))
+(into [] xs)
 
-(defn id-set [users]
-  (into #{} (map :id users)))
+(into #{} xs)
 
-(defn rename-keys [m]
-  (into {} (map (fn [[k v]] [(keyword (str "new-" (name k))) v]) m)))
+(into {} (map (fn [[k v]] [k (f v)]) m))
 
-(comment
-  (active-ids users) ;; => [1 3]
-  (id-set users)     ;; => #{1 2 3}
-  (rename-keys {:a 1 :b 2}) ;; => {:new-a 1, :new-b 2}
-)
+(into {} (for [[k v] m] [k (f v)]))
 ```
 
 * __Sources and Excerpts:__
