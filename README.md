@@ -1,22 +1,11 @@
 # Catalog of Clojure-related code smells
 
-This repository presents a catalog of code smells related to the Clojure ecosystem. Each smell contains a description, code example, source and supporting excerpt from source indicating the smell.
 
-Alongside this catalog, we are also compiling a complementary catalog of traditional code smells described in the literature, which have likewise been observed in the Clojure ecosystem. The catalog is available [here](/traditional/README.md).
+# Summary of the Catalog
 
-# Methodolody
+This repository presents a catalog of code smells related to the Clojure ecosystem. It contains 35 Clojure-specific and 23 Functional-related smells. Each smell contains a description, code example, source and supporting excerpt from source indicating the smell. You can find the details on how we built this catalog in the [Methodology section](#methodology).
 
-The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
-
-In a nutshell, we analyzed developer discussions from forums, blogs, and other practitioner sources to identify recurring problematic patterns that experienced Clojure developers frequently encounter and discuss. The catalog was compiled from real-world experience shared by practitioners across various online platforms.
-
-This catalog reflects the current stage of our ongoing study. In this phase, we are promoting the catalog through the main communication channels of the Clojure comunity, with the aim of gathering community contributions and continuously refining and expanding the catalog.
-
-We plan to expand it in future phases, following the model of the Elixir work.
-
-Contributions are welcome via Issues and Pull Requests.
-
-# Table of Smells
+# Table of Contents
 <!-- no toc -->
 - [Clojure-specific Smells](#clojure-specific-smells)
   - [Unnecessary Macros](#unnecessary-macros)
@@ -78,7 +67,8 @@ Contributions are welcome via Issues and Pull Requests.
   - [Lazy Sequence Accumulation](#lazy-sequence-accumulation)
   - [Global Test Fixture Cache](#global-test-fixture-cache)
   - [Inline Complex Operation](#inline-complex-operation)
-
+- [Methodology](#methodology)
+  
 # Clojure-specific Smells
 
 ## Unnecessary Macros
@@ -143,18 +133,11 @@ Contributions are welcome via Issues and Pull Requests.
 
 * __Example:__
 ```clojure
-(defn process-if-not-empty [coll]
-  (when (not (empty? coll))
-    (str "Processing: " coll)))
+;; Example from source
 
-(defn process-if-empty [coll]
-  (when (= 0 (count coll))
-    "Empty collection detected"))
+(when (not (empty? x)) ...)
 
-[(process-if-not-empty [])
- (process-if-not-empty [1 2])
- (process-if-empty [])
- (process-if-empty [1])]
+(when-not (empty? x) ...)
 ```
 
 * __Sources and Excerpts:__
@@ -188,22 +171,15 @@ Contributions are welcome via Issues and Pull Requests.
 
 * __Example:__
 ```clojure
-(def users [{:id 1 :active true} {:id 2 :active false} {:id 3 :active true}])
+;; Example from source
 
-(defn active-ids [users]
-  (into [] (map :id (filter :active users))))
+(into [] xs)
 
-(defn id-set [users]
-  (into #{} (map :id users)))
+(into #{} xs)
 
-(defn rename-keys [m]
-  (into {} (map (fn [[k v]] [(keyword (str "new-" (name k))) v]) m)))
+(into {} (map (fn [[k v]] [k (f v)]) m))
 
-(comment
-  (active-ids users) ;; => [1 3]
-  (id-set users)     ;; => #{1 2 3}
-  (rename-keys {:a 1 :b 2}) ;; => {:new-a 1, :new-b 2}
-)
+(into {} (for [[k v] m] [k (f v)]))
 ```
 
 * __Sources and Excerpts:__
@@ -1378,3 +1354,26 @@ Contributions are welcome via Issues and Pull Requests.
 
     -  **Source:** [Issue](https://github.com/oracle-samples/clara-rules/issues/383)<br>
     **Excerpt:** “Doing a bunch of (crazy) operations inline should be considered an anti-pattern. It also makes it more difficult to do optimizations like done here.”
+
+# Methodology
+
+The methodology follows the [original study](https://doi.org/10.1007/s10664-023-10343-6) on Elixir by Vegi & Valente (2023), with adaptations for the specifics of Clojure.
+
+The figure below summarizes the overall research process:
+
+<p align="center">
+  <img 
+    src="https://github.com/user-attachments/assets/8c431516-f502-4176-a202-27b8b4f3a492"
+    width="50%"
+  />
+</p>
+
+<br/>
+
+In a nutshell, our study began with a structured Google search using keywords related to Clojure and code smells to locate relevant community discussions. From this search, we identified forums, blogs, and other practitioner-oriented sources where we analyzed reports and debates to uncover recurring problematic patterns frequently mentioned by experienced Clojure developers. Based on this initial analysis, we compiled the first version of the catalog, grounded in real-world experiences shared across various online platforms.
+
+After building this initial catalog, we shared it through the main communication channels of the Clojure community to gather feedback, validate the relevance of the identified smells, and understand how practitioners perceive them in practice.
+
+In the next phase, we expanded the study by mining repositories from the Clojure ecosystem on GitHub. We analyzed issues, pull requests, commits, and code files to identify new code smells. This second round of analysis allowed us to expand the catalog and strengthen its empirical foundation.
+
+Contributions are welcome via Issues and Pull Requests.
