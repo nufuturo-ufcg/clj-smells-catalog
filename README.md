@@ -10,7 +10,6 @@ This repository presents a catalog of code smells related to the Clojure ecosyst
 - [Clojure-specific Smells](#clojure-specific-smells)
   - [Unnecessary Macros](#unnecessary-macros)
   - [Immutability Violation](#immutability-violation)
-  - [Namespaced Keys Neglect](#namespaced-keys-neglect)
   - [Improper Emptiness Check](#improper-emptiness-check)
   - [Map With Nil Values](#map-with-nil-values)
   - [Unnecessary `into`](#unnecessary-into)
@@ -84,24 +83,6 @@ This repository presents a catalog of code smells related to the Clojure ecosyst
 
   -  **Source:** [Forum - How to refactor a Java singleton to Clojure?](https://softwareengineering.stackexchange.com/questions/219780/how-to-refactor-a-java-singleton-to-clojure)<br>
       **Excerpt:** “Mutable state totally destroys this concept, and with it, the advantages of pure code. Clojure doesn't force you to be pure, but it certainly makes it easy to do so”
-
-## Namespaced Keys Neglect
-
-* __Description:__ This code smell occurs when developers rely on unqualified keywords (e.g., `:id`, `:name`) instead of using namespaced keywords (e.g., `:user/id`, `:order/name`). While seemingly harmless, this practice leads to ambiguity, increased risk of key collisions, and reduced semantic clarity — particularly in large or modular systems.
-
-* __Example:__
-```clojure
-(def user {:id 1 :name "Alice"})
-(def order {:id 101 :name "Order-101"})
-
-(println (:id user))    ;; 1
-(println (:id order))   ;; 101
-```
-
-* __Sources and Excerpts:__
-
-  -  **Source:** [Reddit - Functional programming anti-patterns?](https://www.reddit.com/r/Clojure/comments/gf9vl0/functional_programming_antipatterns/)<br>
-      **Excerpt:** “Namespaced keywords are good. Use them.”
 
 ## Improper Emptiness Check
 
