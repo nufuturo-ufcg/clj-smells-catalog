@@ -73,7 +73,7 @@ This category focuses on how Clojure systems manage data identity over time, mut
       **Excerpt:** “Mutable state totally destroys this concept, and with it, the advantages of pure code. Clojure doesn't force you to be pure, but it certainly makes it easy to do so”
 
 
-## Blocking Inside Go
+### Blocking Inside Go
 
 * __Description:__ This code smell occurs when a blocking operation (`a/<!!`, `a/>!!`, or general blocking I/O) is called inside a `go` block. `go` blocks are designed for non-blocking, cooperative concurrency and execute on a small, fixed-size thread pool. Blocking inside a `go` block defeats this purpose, risking thread starvation, deadlocks, and system-wide performance degradation.
 
@@ -95,7 +95,7 @@ This category focuses on how Clojure systems manage data identity over time, mut
       **Excerpt:** "This is a call to >!! or <!! inside a go block causing this, which effectively blocks an internal go dispatch thread, so clearly bad practice from whatever is doing that [...]."
 
 
- ### Nested Atoms
+### Nested Atoms
 
 * __Description:__ Storing an `Atom` or other managed reference (like a `Volatile` or `Ref`) inside another `Atom`. This is an anti-pattern because it violates the principle of atomic state management. Updating the inner `Atom` does not update the outer `Atom`'s value, making it impossible to guarantee a single, consistent snapshot of the overall state at any time. This might lead to complicated state transitions and undermine the simplicity of the state model.
 
@@ -385,7 +385,7 @@ This category focuses on how Clojure code interacts with the language’s core a
       **Excerpt:** "having the state reference object on deps and derefing on use-effect has no real meaning and is an anti pattern in any way"
 
 
-## Improper Emptiness Check
+### Improper Emptiness Check
 
 * __Description:__ This code smell occurs when developers use verbose or less idiomatic constructs—such as (`not (empty? x)`)—to determine whether a collection is non-empty, instead of leveraging the more concise and expressive idiom (`seq x`). In Clojure, the concept of emptiness is nuanced: `nil` is considered empty, sequences can be infinite or lazy, and realization may matter. Using `seq` not only simplifies the check but also aligns with Clojure’s idiomatic style, improving readability and avoiding redundant negation or abstraction layers.
 
