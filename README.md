@@ -219,7 +219,7 @@ This repository presents a catalog of code smells related to the Clojure ecosyst
 
 ## Redundant `do` block
 
-* __Description:__ This code smell occurs when developers wrap expressions in an explicit (`do ...`) block inside constructs that already support implicit sequencing, such as `let`, `when`, `if`, `fn`, `try`, `loop`, and others. This redundant use of do adds no semantic value but introduces unnecessary syntax, making the code appear more complex and imperative than it actually is.
+* __Description:__ This code smell occurs when developers wrap expressions in a (do ...) block inside constructs that already support an implicit do, such as let, when, fn, try, and others. This redundant use of do adds no semantic value but introduces unnecessary syntax, making the code appear more complex and imperative than it actually is.
 
 * __Example:__
 ```clojure
