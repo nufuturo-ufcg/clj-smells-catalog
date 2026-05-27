@@ -720,12 +720,13 @@ This repository presents a catalog of code smells related to the Clojure ecosyst
 
 * __Example:__
 ```clojure
-;; Not from source
-(defn- ^:private process-event [event]
-  (defmulti process-event :type))
-
-(defmethod process-event :user/create [{:keys [user]}]
-  (log/info "Creating user" user))
+;; Example from source
+(defmulti ^:private indenter-fn
+  "Multimethod for applying indentation rules to forms."
+  ;; Accepts [rule-key list-indent-size [rule-type & args]]
+  (fn dispatch
+    [_ _ rule]
+    (first rule)))
 ```
 
 * __Sources and Excerpts:__
