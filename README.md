@@ -71,6 +71,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
 
   -  **Source:** [Forum - How to refactor a Java singleton to Clojure?](https://softwareengineering.stackexchange.com/questions/219780/how-to-refactor-a-java-singleton-to-clojure)<br>
       **Excerpt:** “Mutable state totally destroys this concept, and with it, the advantages of pure code. Clojure doesn't force you to be pure, but it certainly makes it easy to do so”
+     
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 
 ### Blocking Inside Go
@@ -95,6 +100,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
       **Excerpt:** "This is a call to >!! or <!! inside a go block causing this, which effectively blocks an internal go dispatch thread, so clearly bad practice from whatever is doing that [...]."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+
 ### Nested Atoms
 
 * __Description:__ Storing an `Atom` or other managed reference (like a `Volatile` or `Ref`) inside another `Atom`. This is an anti-pattern because it violates the principle of atomic state management. Updating the inner `Atom` does not update the outer `Atom`'s value, making it impossible to guarantee a single, consistent snapshot of the overall state at any time. This might lead to complicated state transitions and undermine the simplicity of the state model.
@@ -111,6 +121,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
 
   -  **Source:** [Issue](https://github.com/andrewleverette/clojulator/issues/6)<br>
       **Excerpt:** "[...] managing the UI state led to including that history atom in the global state atom. Nested atoms seem to be an anti-pattern."    
+
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 
 ### Misuse of Dynamic Scope
@@ -134,6 +149,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
       **Excerpt:** "In general, there's a very narrow set of circumstances where dynamic vars are a good idea."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+
 ### Overengineering with `core.async`
 
 * __Description:__ The misuse of the full abstraction of the `clojure.core.async` library for simple asynchronous tasks, such as returning a result that only involves a single value or a one-time response. Channels are designed for complex streams of events or coordinating multiple concurrent processes. Using channels for simple tasks introduces unnecessary complexity, increases cognitive load, and adds overhead when simpler, more expressive abstractions like Promises/Deferreds (e.g., `promesa`) or direct callbacks are sufficient and more idiomatic.
@@ -154,6 +174,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
 
   -  **Source:** [Issue](https://github.com/oliyh/re-graph/issues/11)<br>
       **Excerpt:** "Regarding core-async in general I've always found it to be an anti-pattern to use it for channels that only ever return one value, I think callback-fns or promises are better in these instances."
+
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 
 ### Dynamically-Scoped Singleton Resource
@@ -184,6 +209,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
       **Excerpt:** "I should also point out that I am unsure of the merits of dynamic scoped objects."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+
 ### Unnecessary Laziness
 
 * __Description:__ The default use of lazy sequence functions (e.g., `map`, `filter`) when an eager sequence function (e.g., `mapv`, `into []`) would be more efficient, less complex, and better communicate the developer's intent. Using lazy sequences without a specific need (like infinite length or controlled side effects) adds complexity, risks unexpected realization bugs, and contributes to the Lazy Side Effects smell by making performance unpredictable.
@@ -200,7 +230,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
 
   -  **Source:** [Issue](https://github.com/taoensso/faraday/issues/99)<br>
       **Excerpt:** "I.e. would suggest that using laziness when one doesn't specifically need/want laziness is an anti-pattern."
-     
+
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ## Environment & Idioms
 
@@ -224,6 +258,10 @@ This category focuses on how Clojure code interacts with the language’s core a
       **Excerpt:** "Huge no-no to open up a java.io.Reader and not close it (use with-open here)."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Relying on Load-Time Side Effects
 
 * __Description:__ The practice of relying on a function or macro's output being static or globally available because it was evaluated as a top-level form during namespace loading. This is a anti-pattern because the code relies on the unmanaged side effect of the loading process and the mutable state of the running system. This fragility breaks static analysis, causes non-deterministic behavior during REPL reloading, and violates the functional contract that code should be safe regardless of execution order.
@@ -242,6 +280,10 @@ This category focuses on how Clojure code interacts with the language’s core a
       **Excerpt:** "Relying on load time behavior for non-declarative operations is a huge antipattern."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Namespace Load Side Effects
 
 * __Description:__ Performing operations such as `require` or `requiring-resolve` in a top-level form outside of the primary `ns` macro. This is a anti-pattern because it introduces hidden, dynamic dependencies that bypass the build tool's static dependency graph. This breaks predictable load ordering, leading to non-deterministic compilation, making the code harder to analyze, test, and maintain.
@@ -259,6 +301,10 @@ This category focuses on how Clojure code interacts with the language’s core a
   -  **Source:** [Issue](https://github.com/metabase/metabase/issues/52004)<br>
       **Excerpt:** "Do not use `require` in a top-level form outside of `ns` [...]."
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Multiple Evaluation in Macros
 
@@ -281,6 +327,10 @@ This category focuses on how Clojure code interacts with the language’s core a
       **Excerpt:** "Had you inserted value more than once, it could be evaluated multiple times, which you rarely want."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Direct usage of `clojure.lang.RT`
 
 * __Description:__ This code smell occurs when Clojure code directly invokes methods from the `clojure.lang.RT` class, such as `clojure.lang.RT/iter`, to perform operations that are not exposed through the public Clojure API. The RT class is part of Clojure's internal implementation and is not intended for direct use in application code. Directly invoking methods from this class can lead to fragile code that is susceptible to breakage with future updates to the language.
@@ -301,7 +351,11 @@ This category focuses on how Clojure code interacts with the language’s core a
 
   -  **Source:** [Forum - Is interop with clojure.lang.RT an anti-pattern in clojure? / consider adding iter to clojure.core](https://ask.clojure.org/index.php/10303/interop-clojure-pattern-clojure-consider-adding-iter-clojure)<br>
       **Excerpt:** “RT should be considered internal implementation and should not be called directly. Iterators, in general, are very un-clojurey. They are stateful and generally not concurrency friendly.”
-     
+
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Unnecessary Macros
 
@@ -321,6 +375,10 @@ This category focuses on how Clojure code interacts with the language’s core a
       **Excerpt:** “Using macros when regular functions would do is a good example of that. It is absolutely possible to write impenetrable Clojure if you start doing weird things just because you can.”
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Production `doall`
 
 * __Description:__ This code smell occurs when the `doall` function is used in production code to force realization of lazy sequences, often to trigger side effects or avoid deferred evaluation. While `doall` can be useful in REPL experimentation, its use in production undermines one of Clojure’s core strengths: laziness. For large or infinite sequences, this can lead to memory spikes and unpredictable performance. In production contexts, doall often signals poor abstraction choices and should prompt reconsideration of the control flow or evaluation strategy.
@@ -338,6 +396,10 @@ This category focuses on how Clojure code interacts with the language’s core a
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
       **Excerpt:** “`doall` is a macro which forcefully realizes lazy sequences. It should not be used in production.”
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Misuse of Channel Closing Semantics
 
@@ -363,6 +425,10 @@ This category focuses on how Clojure code interacts with the language’s core a
       **Excerpt:** "I do think that stopping on :done rather than a channel closing is non-idiomatic and bad practice."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Refs in Dependency Vector
 
 * __Description:__ The anti-pattern of placing a mutable state reference object (an Atom, a `use-state` object, or a raw `use-ref` object) directly into a hook's dependency array (`[]`). Dependency arrays rely on comparing values for change detection. Placing the reference object often causes the hook to either never re-run (if the reference is stable) or re-run unexpectedly (if the framework updates the reference). The idiomatic solution is to track the dereferenced value (`@ref`) instead.
@@ -385,6 +451,10 @@ This category focuses on how Clojure code interacts with the language’s core a
       **Excerpt:** "having the state reference object on deps and derefing on use-effect has no real meaning and is an anti pattern in any way"
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Improper Emptiness Check
 
 * __Description:__ This code smell occurs when developers use verbose or less idiomatic constructs—such as (`not (empty? x)`)—to determine whether a collection is non-empty, instead of leveraging the more concise and expressive idiom (`seq x`). In Clojure, the concept of emptiness is nuanced: `nil` is considered empty, sequences can be infinite or lazy, and realization may matter. Using `seq` not only simplifies the check but also aligns with Clojure’s idiomatic style, improving readability and avoiding redundant negation or abstraction layers.
@@ -403,6 +473,10 @@ This category focuses on how Clojure code interacts with the language’s core a
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
       **Excerpt:** “Don't use (not (empty? x))!”
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Unnecessary `into`
 
@@ -426,6 +500,10 @@ This category focuses on how Clojure code interacts with the language’s core a
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
       **Excerpt:** “`into` is a pretty useful function, but one often abused. The (mis)usage of into can usually be broken to three distinct cases: Type Transformation, Map Mapping and Not Using the Transducer API.”
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ## Module Boundaries & Data Contracts
 
@@ -455,6 +533,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
       **Excerpt:** "It's worth noting that the clojure.core namespace is very atypical for bootstrapping reasons and should not be considered an example of good style."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Implicit Namespace Dependencies
 
 * __Description:__ This smell occurs when a developer relies on symbols from another namespace without explicitly declaring them (e.g., using `(:refer :all)` or `(:use ...)`). This practice introduces symbol ambiguity, leads to namespace pollution, and creates implicit dependencies that static analysis tools (linters, refactoring engines) cannot reliably resolve. This significantly reduces code clarity and increases the risk of name collisions.
@@ -475,6 +557,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
       **Excerpt:** "The :refer :all in clojure matches the symbol of GET with compojure.core/GET. but in grasp it does not match anything and defaults to the current namespace"
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Marker Protocol
 
 * __Description:__ The use of `defprotocol` solely to define a type identifier (a "marker") for use with type checking, rather than defining a contract for polymorphic behavior. The `defprotocol` macro is intended for defining methods that can be extended to different types. Making it a marker introduces the complexity and overhead of the protocol machinery unnecessarily.
@@ -493,6 +579,9 @@ This category focuses on the surface area of namespaces and modules, as well as 
   -  **Source:** [Pull Request](https://github.com/Tensegritics/ClojureDart/pull/262)<br>
       **Excerpt:** "Marker protocols are generally a code smell to me."
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Single-segment Namespace
 
@@ -510,6 +599,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
   -  **Source:** [Issue](https://github.com/clj-easy/graal-build-time/issues/35)<br>
       **Excerpt:** "As single-segment namespaces are an anti-pattern in Clojure, I'm happy not to invest any time in finding a way to make them work."
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Private Multimethods
 
@@ -532,6 +625,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
       **Excerpt:** "Private multimethods are a code smell."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Non-Idiomatic Record Construction
 
 * __Description:__ This smell occurs when a developer uses the Java Interoperability positional constructor (e.g., `(->MyRecord val1 val2)`) to instantiate a `defrecord`. This method is non-idiomatic, relies on the positional order of fields, and causes code to break silently if a field is added or reordered in the record definition. The idiomatic Clojure alternative is to use the `map->RecordName` constructor with keyword arguments or the factory function with keyword arguments, which decouple instantiation from field order.
@@ -550,6 +647,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
   -  **Source:** [Record Constructors](https://stuartsierra.com/2015/05/17/clojure-record-constructors/)<br>
       **Excerpt:** “defrecord and deftype compile into Java classes, so it is possible to construct them using Java interop syntax like this [...] But don't do that. Interop syntax is for interop with Java libraries.”
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Excessive Refers
 
@@ -576,6 +677,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
       **Excerpt:** "Clojure style guide recommends `:as` or `:refer [...]` over `:refer :all`"
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Map With Nil Values
 
 * __Description:__ This code smell occurs when `nil` values are inserted into a map. In Clojure, both a missing key and a key explicitly associated with `nil` return `nil` when accessed, making it difficult to distinguish between the two cases. This ambiguity can obscure program intent, lead to subtle bugs, and complicate reasoning about data state. Instead of inserting `nil`, prefer omitting the key entirely or using a sentinel value that more clearly expresses the intended meaning.
@@ -595,6 +700,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
       **Excerpt:** “Clojure maps are collections, not slots. Combined with nil's meaning being "nothing", nil values inside maps are confusing. [...] Try to avoid inserting nil values into a map.”
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Non-Idiomatic Parameter Binding
 
 * __Description:__ The use of confusing or non-standard syntax (such as `& [x]`) to define a single optional argument or variadic arity. This binding method is verbose, structurally confusing (as it captures a single argument from a sequence), and obscures the function's contract. This must be refactored by replacing the complex binding with the explicit, idiomatic practice of using multiple function arities or a clean options map.
@@ -613,6 +722,10 @@ This category focuses on the surface area of namespaces and modules, as well as 
   -  **Source:** [Pull Request](https://github.com/weavejester/codox/pull/205)<br>
       **Excerpt:** "`& [ns]` is something we should replace with proper argument arities (or omitted entirely, if they are never used)"
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ## Logic Flow & Readability
 
@@ -645,6 +758,11 @@ This category focuses on the visual and cognitive path through which data transf
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
       **Excerpt:** “Conditional Build-Up”
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Nested Forms
 
 * __Description:__ This code smell occurs when multiple binding or iteration forms—such as `let`, `when-let`, `if-let`, or `doseq`—are unnecessarily nested instead of being combined in a single, flat form. While technically valid, this nesting introduces extra indentation and structural complexity without adding semantic value. It obscures the relationships between bindings, increases visual noise, and makes the code harder to read and reason about.
@@ -668,6 +786,10 @@ This category focuses on the visual and cognitive path through which data transf
       **Excerpt:** “Plenty of macros with binding forms don't need to be nested.”
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Misused Threading
 
 * __Description:__ The misuse of threading macros (`->` or `->>`) to chain together operations where the data type of the threaded argument changes fundamentally at each step (e.g., threading a map into a string, into a `File` object, and back into a map). Threading macros are intended for homogeneous, sequential transformations on a similar data type.
@@ -689,6 +811,10 @@ This category focuses on the visual and cognitive path through which data transf
       **Excerpt:** "Also, stylistically, I think this is an example of a threading antipattern - thread-first and thread-last are best used to chain together successive transformations on a similar argument type."
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Case with Non-Literal Test Values
 
 * __Description:__ This smell occurs when the `case` macro is used with test expressions that rely on runtime values (such as bindings or variables) instead of compile-time constants (literals). The `case` macro is optimized to test for the identity of literals and does not guarantee correct runtime equality (`=`) for dynamic values. Using it with non-literal values is a dangerous practice that can lead to subtle, difficult-to-debug logic errors. Developers must use `cond` or `condp` for all runtime comparison logic.
@@ -708,6 +834,10 @@ This category focuses on the visual and cognitive path through which data transf
   -  **Source:** [Pull Request](https://github.com/status-im/status-mobile/pull/16781)<br>
       **Excerpt:** "`case` should be used only with literals"
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Thread Ignorance
 
@@ -729,6 +859,10 @@ This category focuses on the visual and cognitive path through which data transf
   -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
       **Excerpt:** “Avoid trivial threading [...] And remember to thread with style.”
 
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 ### Verbose Checks
 
@@ -758,6 +892,10 @@ This category focuses on the visual and cognitive path through which data transf
       **Excerpt:** Numbers! and Truth Be Told sections
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ### Redundant `do` block
 
 * __Description:__ This code smell occurs when developers wrap expressions in a (do ...) block inside constructs that already support an implicit do, such as let, when, fn, try, and others. This redundant use of do adds no semantic value but introduces unnecessary syntax, making the code appear more complex and imperative than it actually is.
@@ -779,6 +917,9 @@ This category focuses on the visual and cognitive path through which data transf
       **Excerpt:** “Some expressions have implicit `do` blocks in them, making it unnecessary to use a `do` block.”
 
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 
 # Methodology
@@ -801,5 +942,9 @@ In a nutshell, our study began with a structured Google search using keywords re
 After building this initial catalog, we shared it through the main communication channels of the Clojure community to gather feedback, validate the relevance of the identified smells, and understand how practitioners perceive them in practice.
 
 In the next phase, we expanded the study by mining repositories from the Clojure ecosystem on GitHub. We analyzed issues, pull requests, commits, and code files to identify new code smells. This second round of analysis allowed us to expand the catalog and strengthen its empirical foundation.
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
 
 Contributions are welcome via Issues and Pull Requests.
