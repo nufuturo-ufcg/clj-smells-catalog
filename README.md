@@ -2,6 +2,7 @@
 
 ## Table of Contents
 <!-- no toc -->
+- [Introduction](#introduction)
 - [State & Concurrency](#state--concurrency)
   - [Immutability Violation](#immutability-violation)
   - [Blocking Inside Go](#blocking-inside-go)
@@ -45,7 +46,21 @@
   - [Redundant `do` block](#redundant-do-block)
   
 - [Methodology](#methodology)
-  
+
+## Introduction
+
+Software systems evolve continuously, and maintaining internal code quality is essential for long-term maintainability and reduced maintenance effort. Code smells are commonly used indicators of potential design or implementation issues that may affect readability, evolution, and refactoring. While well established in object-oriented systems, functional programming languages remain comparatively underexplored, leaving open questions about how these quality concerns manifest in practice. Motivated by this gap, we investigate code smells in the Clojure ecosystem using grey literature.
+
+This catalog consolidates 34 Clojure-specific code smells identified through grey literature analysis. The smells are organized into four categories — State & Concurrency, Module Boundaries & Data Contracts, Logic Flow & Readability, and Environment & Idioms — each grouping related smells according to different dimensions of maintainability in Clojure systems.
+
+Each code smell is documented using the following structure:
+
+- **Name:** Identifier of the code smell, used to facilitate communication between developers.
+- **Description:** Explanation of how the smell may harm code quality and impact maintainability.
+- **Example:** Code snippet illustrating the occurrence of the smell.
+- **Sources and Excerpts:** Evidence from grey literature, including developer discussions that motivate and support the smell.
+
+Contributions are highly welcome. Readers are encouraged to open issues or submit pull requests for any corrections, improvements, or additions to the catalog. Further details about the methodology can be found in the [Methodology](#methodology) section.
 
 ## State & Concurrency
 
