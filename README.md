@@ -80,18 +80,14 @@ This category focuses on how Clojure systems manage data identity over time, mut
 
 ### Blocking Inside Go
 
-* __Description:__ This code smell occurs when a blocking operation (`a/<!!`, `a/>!!`, or general blocking I/O) is called inside a `go` block. `go` blocks are designed for non-blocking, cooperative concurrency and execute on a small, fixed-size thread pool. Blocking inside a `go` block defeats this purpose, risking thread starvation, deadlocks, and system-wide performance degradation.
+* __Description:__ This code smell occurs when a blocking operation (e.g., `a/alts!!`, `a/<!!`, `a/>!!`, or other blocking I/O calls) is used inside a `go` block. `go` blocks are designed for non-blocking concurrency and execute on a finite thread pool. Introducing blocking calls inside them violates this model, potentially exhausting the thread pool and preventing other tasks from progressing. This can lead to thread starvation, deadlocks, and overall performance degradation.
 
 * __Example:__
 ```clojure
 ;; Not from source
-(ns my-app.async-fail
-  (:require [clojure.core.async :as a]))
-
-(def my-chan (a/chan))
-
 (a/go
-  (println "Blocked thread consuming:" (a/<!! my-chan)))
+  (a/alts!! [started-chan (a/timeout 1000)])
+  (a/close! result-chan))
 ```
 
 * __Sources and Excerpts:__
