@@ -333,14 +333,7 @@ This category focuses on how Clojure code interacts with the language’s core a
 
 * __Example:__
 ```clojure
-(defn print-all [xs]
-  (let [it (clojure.lang.RT/iter xs)]
-    (loop []
-      (when (.hasNext it)
-        (println (.next it))
-        (recur)))))
-
-(print-all [1 2 3])
+(iterator-seq (clojure.lang.RT/iter [1 2 3]))
 ```
 
 * __Sources and Excerpts:__
@@ -734,19 +727,14 @@ This category focuses on the visual and cognitive path through which data transf
 
 * __Example:__
 ```clojure
-(defn f0 [in] (* in 10))
-(defn f1 [in] (+ in 1))
-(defn f2 [in] (- in 1))
-(defn p1 [in] (pos? in))
-(defn p2 [in] (even? in))
-
-(defn foo [in]
-  (let [m {:k0 (f0 in)}
-        m (if (p1 in) (assoc m :k1 (f1 in)) m)
-        m (if (p2 in) (assoc m :k2 (f2 in)) m)]
-    m))
-
-(foo 2)
+;; Not from source
+(let [m {}
+      m (if (:a input) (assoc m :a 1) m)
+      m (if (:b input) (assoc m :b 2) m)
+      m (if (:c input) (assoc m :c 3) m)
+      m (if (:d input) (assoc m :d 4) m)
+      m (if (:e input) (assoc m :e 5) m)]
+  m)
 ```
 
 * __Sources and Excerpts:__
