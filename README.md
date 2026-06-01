@@ -62,6 +62,10 @@ Each code smell is documented using the following structure:
 
 Contributions are highly welcome. Readers are encouraged to open issues or submit pull requests for any corrections, improvements, or additions to the catalog. Further details about the methodology can be found in the [Methodology](#methodology) section.
 
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 ## State & Concurrency
 
 This category focuses on how Clojure systems manage data identity over time, mutable state, and asynchronous execution.
@@ -927,20 +931,21 @@ The methodology follows the [original study](https://doi.org/10.1007/s10664-023-
 
 The figure below summarizes the overall research process:
 
+
 <p align="center">
   <img 
-    src="https://github.com/user-attachments/assets/8c431516-f502-4176-a202-27b8b4f3a492"
-    width="50%"
+    src="https://github.com/user-attachments/assets/8fa6c3c9-4219-4be8-af8c-ad024dc914ae"
+    width="70%"
   />
 </p>
 
 <br/>
 
-In a nutshell, our study began with a structured Google search using keywords related to Clojure and code smells to locate relevant community discussions. From this search, we identified forums, blogs, and other practitioner-oriented sources where we analyzed reports and debates to uncover recurring problematic patterns frequently mentioned by experienced Clojure developers. Based on this initial analysis, we compiled the first version of the catalog, grounded in real-world experiences shared across various online platforms.
+In a nutshell, our study started with a systematic identification phase combining searches on Google and GitHub. Through Google searches using keywords related to Clojure and code smells, we located community discussions, blog posts, forums, and other practitioner-oriented sources. In parallel, we mined GitHub repositories from the Clojure ecosystem, analyzing issues, pull requests, commits, and source code artifacts. After a document selection process, we examined the collected material to identify recurring problematic patterns reported or exhibited by Clojure developers. This analysis resulted in the first version of the code smell catalog.
 
-After building this initial catalog, we shared it through the main communication channels of the Clojure community to gather feedback, validate the relevance of the identified smells, and understand how practitioners perceive them in practice.
+Next, we promoted the catalog through the main communication channels of the Clojure community and collected feedback through a questionnaire. We analyzed practitioners’ comments and suggestions to refine the catalog, improving the description, relevance, and scope of the identified smells.
 
-In the next phase, we expanded the study by mining repositories from the Clojure ecosystem on GitHub. We analyzed issues, pull requests, commits, and code files to identify new code smells. This second round of analysis allowed us to expand the catalog and strengthen its empirical foundation.
+To further validate the catalog, we conducted a survey involving 95 Clojure developers and organized a Clojure Guild session with influential practitioners. The feedback obtained during this phase was analyzed and incorporated into the final version of the catalog.
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
