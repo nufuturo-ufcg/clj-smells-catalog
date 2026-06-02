@@ -86,16 +86,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
 (update-country {:name "Brazil" :pop 210})
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Forum - How to refactor a Java singleton to Clojure?](https://softwareengineering.stackexchange.com/questions/219780/how-to-refactor-a-java-singleton-to-clojure)<br>
-      **Excerpt:** “Mutable state totally destroys this concept, and with it, the advantages of pure code. Clojure doesn't force you to be pure, but it certainly makes it easy to do so”
-     
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#immutability-violation)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
 --- 
-
 
 ### Blocking Inside Go
 
@@ -109,16 +104,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
   (a/close! result-chan))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/replikativ/datahike/issues/303)<br>
-      **Excerpt:** "This is a call to >!! or <!! inside a go block causing this, which effectively blocks an internal go dispatch thread, so clearly bad practice from whatever is doing that [...]."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#blocking-inside-go)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
 --- 
-
 
 ### Nested Atoms
 
@@ -132,16 +122,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
          :history (atom [])}))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/andrewleverette/clojulator/issues/6)<br>
-      **Excerpt:** "[...] managing the UI state led to including that history atom in the global state atom. Nested atoms seem to be an anti-pattern."    
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#nested-atoms)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
 --- 
-
 
 ### Misuse of Dynamic Scope
 
@@ -156,18 +141,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
 (def ^:dynamic *call-stack* [])
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Code File](https://github.com/jimrthy/protektor/blob/7fec7073fe66207d3eb1a84d74851c5580f463cb/src/protektor/core.clj)<br>
-      **Excerpt:** "All these dynamic globals are definite code smell. [...] I don't like them. At the same time...they're exactly what I need. Or so it seems."
-  -  **Source:** [Issue](https://github.com/weavejester/codox/issues/202)<br>
-      **Excerpt:** "In general, there's a very narrow set of circumstances where dynamic vars are a good idea."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#misuse-of-dynamic-scope)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
 --- 
-
 
 ### Overengineering with `core.async`
 
@@ -185,16 +163,11 @@ This category focuses on how Clojure systems manage data identity over time, mut
     ch))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/oliyh/re-graph/issues/11)<br>
-      **Excerpt:** "Regarding core-async in general I've always found it to be an anti-pattern to use it for channels that only ever return one value, I think callback-fns or promises are better in these instances."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#overengineering-with-coreasync)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
 --- 
-
 
 ### Dynamically-Scoped Singleton Resource
 
@@ -216,13 +189,7 @@ This category focuses on how Clojure systems manage data identity over time, mut
   )
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [On the Perils of Dynamic Scope](https://stuartsierra.com/2013/03/29/perils-of-dynamic-scope/)<br>
-      **Excerpt:** "The problem with this pattern, especially in libraries, is the constraints it imposes on any code that wants to use the library."
-  -  **Source:** [Issue](https://github.com/steffan-westcott/clj-otel/issues/2)<br>
-      **Excerpt:** "I should also point out that I am unsure of the merits of dynamic scoped objects."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#dynamically-scoped-singleton-resource)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -241,11 +208,7 @@ This category focuses on how Clojure systems manage data identity over time, mut
     (vec doubled))) ; Forces realization later
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/taoensso/faraday/issues/99)<br>
-      **Excerpt:** "I.e. would suggest that using laziness when one doesn't specifically need/want laziness is an anti-pattern."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#unnecessary-laziness)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
