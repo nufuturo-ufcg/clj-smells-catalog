@@ -224,4 +224,217 @@ This category focuses on how Clojure systems manage data identity over time, mut
 
 ---
 
+## Environment & Idioms
+
+This category focuses on how Clojure code interacts with the language’s core abstractions, runtime behavior, and idiomatic conventions.
+
+### Unmanaged Resource I/O
+
+[Description: View description and example](README.md#unmanaged-resource-io) 
+
+#### Source 1
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #59728 (metabase/metabase)](https://github.com/metabase/metabase/pull/59728#pullrequestreview-2951949125)<br>
+
+**Excerpt:**
+
+> “Huge no-no to open up a java.io.Reader and not close it (use with-open here)"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Relying on Load-Time Side Effects
+
+[Description: View description and example](README.md#relying-on-load-time-side-effects) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #14 (clj-commons/kibit)](https://github.com/clj-commons/kibit/issues/14#issuecomment-284257729)<br>
+
+**Excerpt:**
+
+> “Relying on load time behavior for non-declarative operations is a huge antipattern."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Namespace Load Side Effects
+
+[Description: View description and example](README.md#namespace-load-side-effects) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #52004 (metabase/metabase)](https://github.com/metabase/metabase/issues/52004#issue-2781529758)<br>
+
+**Excerpt:**
+
+> “Do not use `require` in a top-level form outside of `ns`"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Multiple Evaluation in Macros
+
+[Description: View description and example](README.md#multiple-evaluation-in-macros) 
+
+#### Source 1
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #225 (metabase/metabase)](https://github.com/clj-commons/manifold/pull/225#discussion_r1133205714)<br>
+
+**Excerpt:**
+
+> “Had you inserted value more than once, it could be evaluated multiple times, which you rarely want."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Direct usage of `clojure.lang.RT`
+
+[Description: View description and example](README.md#direct-usage-of-clojurelangrt) 
+
+#### Source 1
+
+**Type:** Google Website
+
+**URL:** [Forum - Is interop with clojure.lang.RT an anti-pattern in clojure? / consider adding iter to clojure.core](https://ask.clojure.org/index.php/10303/interop-clojure-pattern-clojure-consider-adding-iter-clojure)<br>
+
+**Excerpt:**
+
+> “RT should be considered internal implementation and should not be called directly."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Unnecessary Macros
+
+[Description: View description and example](README.md#unnecessary-macros) 
+
+#### Source 1
+
+**Type:** Google Forum
+
+**URL:** [Forum - Structuring Clojure applications](https://news.ycombinator.com/item?id=34052268)<br>
+
+**Excerpt:**
+
+> “Using macros when regular functions would do is a good example of that. It is absolutely possible to write impenetrable Clojure if you start doing weird things just because you can."
+
+#### Source 2
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #120 (nubank/state-flow)](https://github.com/nubank/state-flow/issues/120#issuecomment-630257053)<br>
+
+**Excerpt:**
+
+> “My suggestion is to avoid macros whenever possible because they are can be evil"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Production `doall`
+
+[Description: View description and example](README.md#production-doall) 
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “`doall` is a macro which forcefully realizes lazy sequences. It should not be used in production."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Misuse of Channel Closing Semantics
+
+[Description: View description and example](README.md#misuse-of-channel-closing-semantics) 
+
+#### Source 1
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #63 (wkok/openai-clojure)](https://github.com/wkok/openai-clojure/pull/63#issuecomment-2134098405)<br>
+
+**Excerpt:**
+
+> “I do think that stopping on :done rather than a channel closing is non-idiomatic and bad practice."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Refs in Dependency Vector
+
+[Description: View description and example](README.md#refs-in-dependency-vector) 
+
+#### Source 1
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #5658 (penpot/penpot)](https://github.com/penpot/penpot/pull/5658#discussion_r1930216262)<br>
+
+**Excerpt:**
+
+> “having the state reference object on deps and derefing on use-effect has no real meaning and is an anti pattern in any way"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Improper Emptiness Check
+
+[Description: View description and example](README.md#improper-emptiness-check) 
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “Don't use (not (empty? x))!"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Unnecessary `into`
+
+[Description: View description and example](README.md#unnecessary-into) 
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “`into` is a pretty useful function, but one often abused."
+> The (mis)usage of into can usually be broken to three distinct cases:
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 Contributions are welcome via Issues and Pull Requests.
