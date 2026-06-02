@@ -230,11 +230,7 @@ This category focuses on how Clojure code interacts with the language’s core a
     (line-seq reader)))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/metabase/metabase/pull/59728)<br>
-      **Excerpt:** "Huge no-no to open up a java.io.Reader and not close it (use with-open here)."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#unmanaged-resource-io)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -252,11 +248,7 @@ This category focuses on how Clojure code interacts with the language’s core a
 (def CONFIG (calculate-heavy-config (some/global-atom)))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/clj-commons/kibit/issues/14)<br>
-      **Excerpt:** "Relying on load time behavior for non-declarative operations is a huge antipattern."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#relying-on-load-time-side-effects)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -274,11 +266,7 @@ This category focuses on how Clojure code interacts with the language’s core a
   (requiring-resolve 'my-app.config/get-setting))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/metabase/metabase/issues/52004)<br>
-      **Excerpt:** "Do not use `require` in a top-level form outside of `ns` [...]."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#namespace-load-side-effects)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -299,11 +287,7 @@ This category focuses on how Clojure code interacts with the language’s core a
 (double-log (swap! counter inc)) 
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/clj-commons/manifold/pull/225)<br>
-      **Excerpt:** "Had you inserted value more than once, it could be evaluated multiple times, which you rarely want."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#multiple-evaluation-in-macros)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -318,11 +302,7 @@ This category focuses on how Clojure code interacts with the language’s core a
 (iterator-seq (clojure.lang.RT/iter [1 2 3]))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Forum - Is interop with clojure.lang.RT an anti-pattern in clojure? / consider adding iter to clojure.core](https://ask.clojure.org/index.php/10303/interop-clojure-pattern-clojure-consider-adding-iter-clojure)<br>
-      **Excerpt:** “RT should be considered internal implementation and should not be called directly. Iterators, in general, are very un-clojurey. They are stateful and generally not concurrency friendly.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#direct-usage-of-clojurelangrt)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -340,11 +320,7 @@ This category focuses on how Clojure code interacts with the language’s core a
      ~expr))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Forum - Structuring Clojure applications](https://news.ycombinator.com/item?id=34052268)<br>
-      **Excerpt:** “Using macros when regular functions would do is a good example of that. It is absolutely possible to write impenetrable Clojure if you start doing weird things just because you can.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#unnecessary-macros)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -362,11 +338,7 @@ This category focuses on how Clojure code interacts with the language’s core a
 (print-evens)
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “`doall` is a macro which forcefully realizes lazy sequences. It should not be used in production.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#production-doall)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -390,11 +362,7 @@ This category focuses on how Clojure code interacts with the language’s core a
         (recur)))))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/wkok/openai-clojure/pull/63)<br>
-      **Excerpt:** "I do think that stopping on :done rather than a channel closing is non-idiomatic and bad practice."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#misuse-of-channel-closing-semantics)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -416,11 +384,7 @@ This category focuses on how Clojure code interacts with the language’s core a
     [my-atom-ref])) 
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/penpot/penpot/pull/5658)<br>
-      **Excerpt:** "having the state reference object on deps and derefing on use-effect has no real meaning and is an anti pattern in any way"
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#refs-in-dependency-vector)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -439,11 +403,7 @@ This category focuses on how Clojure code interacts with the language’s core a
 (when-not (empty? x) ...)
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “Don't use (not (empty? x))!”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#improper-emptiness-check)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -466,11 +426,7 @@ This category focuses on how Clojure code interacts with the language’s core a
 (into {} (for [[k v] m] [k (f v)]))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “`into` is a pretty useful function, but one often abused. The (mis)usage of into can usually be broken to three distinct cases: Type Transformation, Map Mapping and Not Using the Transducer API.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#unnecessary-into)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
