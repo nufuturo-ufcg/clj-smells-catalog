@@ -547,22 +547,22 @@ This category focuses on the surface area of namespaces and modules, as well as 
 
 ### Implicit Namespace Dependencies
 
-* __Description:__ This smell occurs when a developer relies on symbols from another namespace without explicitly declaring them (e.g., using `(:refer :all)` or `(:use ...)`). This practice introduces symbol ambiguity, leads to namespace pollution, and creates implicit dependencies that static analysis tools (linters, refactoring engines) cannot reliably resolve. This significantly reduces code clarity and increases the risk of name collisions.
+* __Description:__ This smell occurs when code relies on namespaces whose dependencies are not made explicit through clear and precise `:require` declarations. This may happen through broad imports such as `:use` or `:refer :all`, which obscure the origin of symbols, or by relying on namespaces that happen to be loaded indirectly by other libraries or by Clojure's runtime implementation. Such practices create hidden coupling, reduce code clarity, and make static analysis, refactoring, and maintenance more difficult. They may also lead to symbol conflicts, namespace pollution, or code that depends on implementation details rather than explicit declarations.
 
 * __Example:__
 ```clojure
-(ns samples.web
-  (:require [compojure.core :refer :all]
-            [compojure.route :as route]))
-(defroutes app
-           (GET "/" [] "<h1>Hello World</h1>")
-           (route/not-found "<h1>Page not found</h1>"))
+(ns foo
+  (:require [clojure.string :refer :all]) ; imports all symbols from clojure.string
+  (:use clojure.set))                     ; makes all symbols from clojure.set available
 ```
 
 * __Sources and Excerpts:__
 
-  -  **Source:** [Issue](https://github.com/borkdude/grasp/issues/14)<br>
-      **Excerpt:** "The :refer :all in clojure matches the symbol of GET with compojure.core/GET. but in grasp it does not match anything and defaults to the current namespace"
+  -  **Source:** [Issue #14 (grasp)](https://github.com/borkdude/grasp/issues/14#issue-780773295) <br>
+      **Excerpt:** "When analyzing a file such which has a refer all (which is known to be bad practice) the analyzer
+does not add the extra information to possible unresolved symbols that can match the symbol"
+  - **Source:** [Issue #2460 (clj-kondo)](https://github.com/clj-kondo/clj-kondo/issues/2460#issuecomment-2566930153) <br>
+    **Excerpt:** "clj-kondo considers it bad practice to rely on letting other namespaces load library for you outside of the current one, hence it considers clojure.string not already loaded, even though clojure internally already has - which is just an implementation detail of clojure."
 
 
 [↑ Back to table of contents ↑](#table-of-contents)
