@@ -2,7 +2,6 @@
 
 ## Table of Contents
 <!-- no toc -->
-- [Introduction](#introduction)
 - [State & Concurrency](#state--concurrency)
   - [Immutability Violation](#immutability-violation)
   - [Blocking Inside Go](#blocking-inside-go)
@@ -51,6 +50,8 @@ This category focuses on how Clojure systems manage data identity over time, mut
 
 ### Immutability Violation
 
+[Description: View description and example](README.md#immutability-violation) 
+
 #### Source 1
 
 **Type:** Google Forum
@@ -82,11 +83,12 @@ This category focuses on how Clojure systems manage data identity over time, mut
 > "You really just want to be passing in a immutable data structure into a function and then returning a new data structure which has the change in it."
 
 [↑ Back to table of contents ↑](#table-of-contents) <br>
-[← Back to smell description ←](README.md#immutability-violation) 
 
 --- 
 
 ### Blocking Inside Go
+
+[Description: View description and example](README.md#blocking-inside-go) 
 
 #### Source 1
 
@@ -99,11 +101,12 @@ This category focuses on how Clojure systems manage data identity over time, mut
 > “This is a call to >!! or <!! inside a go block causing this, which effectively blocks an internal go dispatch thread, so clearly bad practice from whatever is doing that [...]”
 
 [↑ Back to table of contents ↑](#table-of-contents) <br>
-[← Back to smell description ←](README.md#blocking-inside-go) 
 
 --- 
 
 ### Nested Atoms
+
+[Description: View description and example](README.md#nested-atoms) 
 
 #### Source 1
 
@@ -116,11 +119,12 @@ This category focuses on how Clojure systems manage data identity over time, mut
 > “[...] managing the UI state led to including that history atom in the global state atom. Nested atoms seem to be an anti-pattern.”
 
 [↑ Back to table of contents ↑](#table-of-contents) <br>
-[← Back to smell description ←](README.md#nested-atoms) 
 
 --- 
 
 ### Misuse of Dynamic Scope
+
+[Description: View description and example](README.md#misuse-of-dynamic-scope) 
 
 #### Source 1
 
@@ -143,11 +147,12 @@ This category focuses on how Clojure systems manage data identity over time, mut
 > “All these dynamic "globals" are a definite code smell."
 
 [↑ Back to table of contents ↑](#table-of-contents) <br>
-[← Back to smell description ←](README.md#misuse-of-dynamic-scope) 
 
 --- 
 
 ### Overengineering with `core.async`
+
+[Description: View description and example](README.md#overengineering-with-coreasync) 
 
 #### Source 1
 
@@ -160,11 +165,12 @@ This category focuses on how Clojure systems manage data identity over time, mut
 > “Regarding core-async in general I've always found it to be an anti-pattern to use it for channels that only ever return one value, I think callback-fns or promises are better in these instances. This would mean you don't need core.async at all!"
 
 [↑ Back to table of contents ↑](#table-of-contents) <br>
-[← Back to smell description ←](README.md#overengineering-with-coreasync)
 
 --- 
 
 ### Dynamically-Scoped Singleton Resource
+
+[Description: View description and example](README.md#dynamically-scoped-singleton-resource) 
 
 #### Source 1
 
@@ -187,11 +193,12 @@ This category focuses on how Clojure systems manage data identity over time, mut
 > “I should also point out that I am unsure of the merits of dynamic scoped objects. This article by Stuart Sierra makes some excellent points about why it may be considered a bad idea."
 
 [↑ Back to table of contents ↑](#table-of-contents) <br>
-[← Back to smell description ←](README.md#dynamically-scoped-singleton-resource)
 
 --- 
 
 ### Unnecessary Laziness
+
+[Description: View description and example](README.md#unnecessary-laziness) 
 
 #### Source 1
 
@@ -214,7 +221,6 @@ This category focuses on how Clojure systems manage data identity over time, mut
 > “would suggest that using laziness when one doesn't specifically need/want laziness is an anti-pattern."
 
 [↑ Back to table of contents ↑](#table-of-contents) <br>
-[← Back to smell description ←](README.md#unnecessary-laziness)
 
 ---
 
