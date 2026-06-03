@@ -454,11 +454,7 @@ This category focuses on the surface area of namespaces and modules, as well as 
 (defn temp [])
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/technomancy/slamhound/issues/61)<br>
-      **Excerpt:** "It's worth noting that the clojure.core namespace is very atypical for bootstrapping reasons and should not be considered an example of good style."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#monolithic-namespace-split)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -475,14 +471,7 @@ This category focuses on the surface area of namespaces and modules, as well as 
   (:use clojure.set))                     ; makes all symbols from clojure.set available
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue #14 (grasp)](https://github.com/borkdude/grasp/issues/14#issue-780773295) <br>
-      **Excerpt:** "When analyzing a file such which has a refer all (which is known to be bad practice) the analyzer
-does not add the extra information to possible unresolved symbols that can match the symbol"
-  - **Source:** [Issue #2460 (clj-kondo)](https://github.com/clj-kondo/clj-kondo/issues/2460#issuecomment-2566930153) <br>
-    **Excerpt:** "clj-kondo considers it bad practice to rely on letting other namespaces load library for you outside of the current one, hence it considers clojure.string not already loaded, even though clojure internally already has - which is just an implementation detail of clojure."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#implicit-namespace-dependencies)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -500,11 +489,7 @@ does not add the extra information to possible unresolved symbols that can match
     (and (satisfies? IUUID other)
          (identical? uuid (.-uuid other))))
 ```
-
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/Tensegritics/ClojureDart/pull/262)<br>
-      **Excerpt:** "Marker protocols are generally a code smell to me."
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#marker-protocol)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -521,11 +506,7 @@ does not add the extra information to possible unresolved symbols that can match
 (defn md5 [s] ...)
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/clj-easy/graal-build-time/issues/35)<br>
-      **Excerpt:** "As single-segment namespaces are an anti-pattern in Clojure, I'm happy not to invest any time in finding a way to make them work."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#single-segment-namespace)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -546,11 +527,7 @@ does not add the extra information to possible unresolved symbols that can match
     (first rule)))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Commit Message](https://github.com/greglook/cljstyle/commit/a52ff57f52670ef2866d3a574557ef9c5198805e)<br>
-      **Excerpt:** "Private multimethods are a code smell."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#private-multimethods)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -568,12 +545,7 @@ does not add the extra information to possible unresolved symbols that can match
 ;;=> #user.Foo{:a 1, :b 2}
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Code File](https://github.com/corpix/clojure-koans/blob/372ba7d2deb6b78d3c6a2fa0a7ed0d0c279b19f7/src/koans/19_datatypes.clj)<br>
-  -  **Source:** [Record Constructors](https://stuartsierra.com/2015/05/17/clojure-record-constructors/)<br>
-      **Excerpt:** “defrecord and deftype compile into Java classes, so it is possible to construct them using Java interop syntax like this [...] But don't do that. Interop syntax is for interop with Java libraries.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#non-idiomatic-record-construction)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -596,13 +568,7 @@ does not add the extra information to possible unresolved symbols that can match
                      moar]])) ; <--- Long list of referred symbols
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Issue](https://github.com/clojure-emacs/refactor-nrepl/issues/305)<br>
-      **Excerpt:** "Having tons of referred symbols is an anti-pattern anyway, so we should nudge people toward not doing that."
-  -  **Source:** [Issue](https://github.com/clj-kondo/clj-kondo/issues/342)<br>
-      **Excerpt:** "Clojure style guide recommends `:as` or `:refer [...]` over `:refer :all`"
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#excessive-refers)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -621,11 +587,7 @@ does not add the extra information to possible unresolved symbols that can match
 (welcome-message {:id 43 :name nil})
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “Clojure maps are collections, not slots. Combined with nil's meaning being "nothing", nil values inside maps are confusing. [...] Try to avoid inserting nil values into a map.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#map-with-nil-values)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -644,11 +606,7 @@ does not add the extra information to possible unresolved symbols that can match
     (do-stuff project nil)))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/weavejester/codox/pull/205)<br>
-      **Excerpt:** "`& [ns]` is something we should replace with proper argument arities (or omitted entirely, if they are never used)"
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#non-idiomatic-parameter-binding)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -675,11 +633,7 @@ This category focuses on the visual and cognitive path through which data transf
   m)
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “Conditional Build-Up”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#conditional-build-up)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -702,11 +656,7 @@ This category focuses on the visual and cognitive path through which data transf
 (process {:profile {:address {:city "Recife"}}})
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “Plenty of macros with binding forms don't need to be nested.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#nested-forms)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -727,11 +677,7 @@ This category focuses on the visual and cognitive path through which data transf
       (project/read-raw)))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/amperity/lein-monolith/pull/97)<br>
-      **Excerpt:** "Also, stylistically, I think this is an example of a threading antipattern - thread-first and thread-last are best used to chain together successive transformations on a similar argument type."
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#misused-threading)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -751,11 +697,7 @@ This category focuses on the visual and cognitive path through which data transf
     :else       (do-default-logic)))
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Pull Request](https://github.com/status-im/status-mobile/pull/16781)<br>
-      **Excerpt:** "`case` should be used only with literals"
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#case-with-non-literal-test-values)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -776,11 +718,7 @@ This category focuses on the visual and cognitive path through which data transf
 (transform [1 2 3 4])
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “Avoid trivial threading [...] And remember to thread with style.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#thread-ignorance)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -808,11 +746,7 @@ This category focuses on the visual and cognitive path through which data transf
 ;; => :negative
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** Numbers! and Truth Be Told sections
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#verbose-checks)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
@@ -833,11 +767,7 @@ This category focuses on the visual and cognitive path through which data transf
 (process-item 2)
 ```
 
-* __Sources and Excerpts:__
-
-  -  **Source:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
-      **Excerpt:** “Some expressions have implicit `do` blocks in them, making it unnecessary to use a `do` block.”
-
+**Sources and Excerpts:** [View sources and supporting excerpts](sources-and-excerpts.md#redundant-do-block)
 
 [↑ Back to table of contents ↑](#table-of-contents)
 
