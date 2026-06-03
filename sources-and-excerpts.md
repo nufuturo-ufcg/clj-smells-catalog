@@ -437,4 +437,387 @@ This category focuses on how Clojure code interacts with the language’s core a
 
 --- 
 
+## Module Boundaries & Data Contracts
+
+This category focuses on the surface area of namespaces and modules, as well as on the clarity and predictability of the values exchanged across them.
+
+### Monolithic Namespace Split
+
+[Description: View description and example](README.md#monolithic-namespace-split) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #61 (technomancy/slamhound)](https://github.com/technomancy/slamhound/issues/61#issuecomment-30028399)<br>
+
+**Excerpt:**
+
+> “However, as each included file has an implicit dependency on the files that have been loaded before it, a simple find-word within a buffer is no longer likely to reveal the source of a symbol, nor every use of it within a namespace."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Implicit Namespace Dependencies
+
+[Description: View description and example](README.md#implicit-namespace-dependencies) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #14 (borkdude/grasp)](https://github.com/borkdude/grasp/issues/14#issue-780773295)<br>
+
+**Excerpt:**
+
+> “When analyzing a file such which has a refer all (which is known to be bad practice) the analyzer
+does not add the extra information to possible unresolved symbols that can match the symbol"
+ 
+#### Source 2
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #2460 (clj-kondo/clj-kondo)](https://github.com/clj-kondo/clj-kondo/issues/2460#issuecomment-2566930153)<br>
+
+**Excerpt:**
+
+> “clj-kondo considers it bad practice to rely on letting other namespaces load library for you outside of the current one, hence it considers clojure.string not already loaded, even though clojure internally already has - which is just an implementation detail of clojure."
+
+#### Source 3
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #1 (amexboy/multi-repo-project)](https://github.com/amexboy/multi-repo-project/pull/1#discussion_r285528892)<br>
+
+**Excerpt:**
+
+> “It's not really a good practice to refer whole namespaces, especially multiple in one namespace because it makes it really hard to find where functions come from. :refer [... :as ...] is a much better idea."
+> Don't use :use. It makes things much hard to follow in order to save a couple of characters per call-site.
+
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Marker Protocol
+
+[Description: View description and example](README.md#marker-protocol) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #262 (Tensegritics/ClojureDart)](https://github.com/Tensegritics/ClojureDart/pull/262#discussion_r1309809273)<br>
+
+**Excerpt:**
+
+> “Marker protocols are generally a code smell to me."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Single-segment Namespace
+
+[Description: View description and example](README.md#single-segment-namespace) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #35 (clj-easy/graal-build-time)](https://github.com/clj-easy/graal-build-time/issues/35#issuecomment-2192231474)<br>
+
+**Excerpt:**
+
+> “As single-segment namespaces are an anti-pattern in Clojure, I'm happy not to invest any time in finding a way to make them work"
+
+#### Source 2
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #42 (boot-clj/boot-cljs)](https://github.com/boot-clj/boot-cljs/issues/42#issuecomment-73830121)<br>
+
+**Excerpt:**
+
+> “Closing as single segment namespace are now officially a bad practice."
+
+#### Source 3
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #22 (deercreeklabs/lancaster)](https://github.com/deercreeklabs/lancaster/pull/22#issue-1378124990)<br>
+
+**Excerpt:**
+
+> “As far as I know, single-segment namespaces are bad practice anyways"
+
+#### Source 4
+
+**Type:** GitHub Commit
+
+**URL:** [Commit (clojure-expectations/expectations)](https://github.com/clojure-expectations/expectations/commit/a0370bf6ae74fa7735b0ba6917692b8c07eba3e0)<br>
+
+**Excerpt:**
+
+> “one-segment namespaces are a bad practice anyway."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Private Multimethods
+
+[Description: View description and example](README.md#private-multimethods) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Commit (greglook/cljstyle)](https://github.com/greglook/cljstyle/commit/a52ff57f52670ef2866d3a574557ef9c5198805e)<br>
+
+**Excerpt:**
+
+> “Private multimethods are a code smell."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Non-Idiomatic Record Construction
+
+[Description: View description and example](README.md#non-idiomatic-record-construction) 
+
+#### Source 1
+
+**Type:** GitHub Source File
+
+**URL:** [src/koans/19_datatypes.clj (corpix/clojure-koans)](https://github.com/corpix/clojure-koans/blob/372ba7d2deb6b78d3c6a2fa0a7ed0d0c279b19f7/src/koans/19_datatypes.clj#L27C7-L27C113)<br>
+
+**Excerpt:**
+
+> “fuckin beautiful, antipattern in the koans https://stuartsierra.com/2015/05/17/clojure-record-constructors"
+
+#### Source 2
+
+**Type:** Google Blog
+
+**URL:** [Record Constructors](https://stuartsierra.com/2015/05/17/clojure-record-constructors/)<br>
+
+**Excerpt:**
+
+> “Interop syntax is for interop with Java libraries."
+> "Since Clojure version 1.3, defrecord and deftype automatically create constructor functions. Use those instead of interop syntax."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Excessive Refers
+
+[Description: View description and example](README.md#excessive-refers) 
+
+#### Source 1
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #305_datatypes.clj (clojure-emacs/refactor-nrepl)](https://github.com/clojure-emacs/refactor-nrepl/issues/305#issue-930892797)<br>
+
+**Excerpt:**
+
+> “Having tons of referred symbols is an anti-pattern anyway, so we should nudge people toward not doing that."
+
+#### Source 2
+
+**Type:** GitHub Issue
+
+**URL:** [Issue #342_datatypes.clj (clj-kondo/clj-kondo)](https://github.com/clj-kondo/clj-kondo/issues/342#issuecomment-511108107)<br>
+
+**Excerpt:**
+
+> “Clojure style guide recommends `:as` or `:refer [...]` over `:refer :all`"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Map With Nil Values
+
+[Description: View description and example](README.md#map-with-nil-values) 
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “Clojure maps are collections, not slots. Combined with nil's meaning being "nothing", nil values inside maps are confusing"
+> "Try to avoid inserting nil values into a map."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Non-Idiomatic Parameter Binding
+
+[Description: View description and example](README.md#non-idiomatic-parameter-binding) 
+
+#### Source 1
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #205 (weavejester/codox)](https://github.com/weavejester/codox/pull/205#discussion_r711587308)<br>
+
+**Excerpt:**
+
+> “`& [ns]` is something we should replace with proper argument arities (or omitted entirely, if they are never used), as it's actually an anti-pattern"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+## Logic Flow & Readability
+
+This category focuses on the visual and cognitive path through which data transformations are expressed in code.    
+
+### Conditional Build-Up
+
+[Description: View description and example](README.md#conditional-build-up) 
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “Conditional Build-Up"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Nested Forms
+
+[Description: View description and example](README.md#nested-forms)
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “Plenty of macros with binding forms don't need to be nested"
+
+#### Source 2
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #1107 (nasa/Common-Metadata-Repository)](https://github.com/nasa/Common-Metadata-Repository/pull/1107#discussion_r524547709)<br>
+
+**Excerpt:**
+
+> “Nested lets are a code smell and this could easily be broken off into another function."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Misused Threading
+
+[Description: View description and example](README.md#misused-threading)
+
+#### Source 1
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #97 (amperity/lein-monolith)](https://github.com/amperity/lein-monolith/pull/97#discussion_r1612337849)<br>
+
+**Excerpt:**
+
+> “Also, stylistically, I think this is an example of a threading antipattern - thread-first and thread-last are best used to chain together successive transformations on a similar argument type."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Case with Non-Literal Test Values
+
+[Description: View description and example](README.md#case-with-non-literal-test-values)
+
+#### Source 1
+
+**Type:** GitHub Pull Request
+
+**URL:** [PR #16781 (status-im/status-legacy)](https://github.com/status-im/status-legacy/pull/16781#discussion_r1275151733)<br>
+
+**Excerpt:**
+
+> “`case` should be used only with literals"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Thread Ignorance
+
+[Description: View description and example](README.md#thread-ignorance)
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “Avoid trivial threading"
+> "And remember to thread with style"
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Verbose Checks
+
+[Description: View description and example](README.md#verbose-checks)
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “Clojure has functions covering some common use cases when working with numbers which both perform and convey intent better."
+> "Same case with numbers, no need to compare to booleans and nil."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
+### Redundant `do` block
+
+[Description: View description and example](README.md#redundant-do-block)
+
+#### Source 1
+
+**Type:** Google Blog
+
+**URL:** [Idiomatic Clojure: Code Smells](https://bsless.github.io/code-smells/)<br>
+
+**Excerpt:**
+
+> “Some expressions have implicit `do` blocks in them, making it unnecessary to use a `do` block."
+
+[↑ Back to table of contents ↑](#table-of-contents)
+
+--- 
+
 Contributions are welcome via Issues and Pull Requests.
