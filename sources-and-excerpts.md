@@ -2,6 +2,7 @@
 
 ## Table of Contents
 <!-- no toc -->
+- [Introduction](#introduction)
 - [State & Concurrency](#state--concurrency)
   - [Immutability Violation](#immutability-violation)
   - [Blocking Inside Go](#blocking-inside-go)
@@ -819,5 +820,10 @@ This category focuses on the visual and cognitive path through which data transf
 [↑ Back to table of contents ↑](#table-of-contents)
 
 --- 
+
+=======
+[← Back to smell description ←](README.md#unnecessary-laziness)
+
+---
 
 Contributions are welcome via Issues and Pull Requests.
