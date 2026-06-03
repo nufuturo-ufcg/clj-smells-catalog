@@ -821,9 +821,4 @@ This category focuses on the visual and cognitive path through which data transf
 
 --- 
 
-=======
-[← Back to smell description ←](README.md#unnecessary-laziness)
-
----
-
 Contributions are welcome via Issues and Pull Requests.
