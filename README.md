@@ -535,7 +535,7 @@ This category focuses on the surface area of namespaces and modules, as well as 
 
 ### Non-Idiomatic Record Construction
 
-* __Description:__ This smell occurs when a developer uses the Java Interoperability positional constructor (e.g., `(->MyRecord val1 val2)`) to instantiate a `defrecord`. This method is non-idiomatic, relies on the positional order of fields, and causes code to break silently if a field is added or reordered in the record definition. The idiomatic Clojure alternative is to use the `map->RecordName` constructor with keyword arguments or the factory function with keyword arguments, which decouple instantiation from field order.
+* __Description:__ This smell occurs when a developer uses Java interop constructor syntax (e.g., `(Foo. 1 2)`) to instantiate a `defrecord` or `deftype`. Since Clojure automatically generates constructor functions (`->Foo` and `map->Foo` for records), using interop syntax is considered non-idiomatic and bypasses the standard abstractions provided by the language. Prefer constructor functions or dedicated factory functions instead.
 
 * __Example:__
 ```clojure
