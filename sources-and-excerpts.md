@@ -243,6 +243,46 @@ This category focuses on how Clojure code interacts with the language’s core a
 
 > “Huge no-no to open up a java.io.Reader and not close it (use with-open here)"
 
+#### Source 2
+
+**Type:** Clojure Documentation
+
+**URL:** [clojure.java.io/reader documentation](https://clojuredocs.org/clojure.java.io/reader)<br>
+
+**Excerpt:**
+
+> “Should be used inside with-open to ensure the Reader is properly closed."
+
+#### Source 3
+
+**Type:** Clojure Documentation
+
+**URL:** [clojure.java.io/writer documentation](https://clojuredocs.org/clojure.java.io/writer)<br>
+
+**Excerpt:**
+
+> “Should be used inside with-open to ensure the Writer is properly closed."
+
+#### Source 4
+
+**Type:** Clojure Documentation
+
+**URL:** [clojure.java.io/input-stream documentation](https://clojuredocs.org/clojure.java.io/input-stream)<br>
+
+**Excerpt:**
+
+> “Should be used inside with-open to ensure the InputStream is properly closed."
+
+#### Source 5
+
+**Type:** Clojure Documentation
+
+**URL:** [clojure.java.io/output-stream documentation](https://clojuredocs.org/clojure.java.io/output-stream)<br>
+
+**Excerpt:**
+
+> “Should be used inside with-open to ensure the OutputStream is properly closed."
+
 [↑ Back to table of contents ↑](#table-of-contents)
 
 --- 
